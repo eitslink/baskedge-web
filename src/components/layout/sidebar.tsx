@@ -15,7 +15,7 @@ import {
   Settings,
 } from 'lucide-react'
 
-const iconMap = {
+const iconMap: Record<string, React.ComponentType<any>> = {
   Home,
   Gamepad2,
   Users,
@@ -42,7 +42,7 @@ export function Sidebar({ className }: SidebarProps) {
           </h2>
           <div className="space-y-1">
             {NAVIGATION_ITEMS.map((item) => {
-              const Icon = iconMap[item.icon as keyof typeof iconMap]
+              const Icon = iconMap[item.icon] || Home // フォールバックとしてHomeを使用
               const isActive = pathname === item.href
 
               return (
