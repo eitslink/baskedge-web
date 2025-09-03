@@ -76,37 +76,37 @@ export const NAVIGATION_ITEMS = [
   },
   {
     title: 'ゲーム',
-    href: '/games',
+    href: '/dashboard/games',
     icon: 'Gamepad2',
   },
   {
     title: 'チーム',
-    href: '/teams',
+    href: '/dashboard/teams',
     icon: 'Users',
   },
   {
     title: '選手',
-    href: '/players',
+    href: '/dashboard/players',
     icon: 'User',
   },
   {
     title: 'スタッフ',
-    href: '/staff',
+    href: '/dashboard/staff',
     icon: 'UserCheck',
   },
   {
     title: '審判',
-    href: '/referees',
+    href: '/dashboard/referees',
     icon: 'Whistle',
   },
   {
     title: 'スポンサー',
-    href: '/sponsors',
+    href: '/dashboard/sponsors',
     icon: 'Heart',
   },
   {
     title: '設定',
-    href: '/settings',
+    href: '/dashboard/settings',
     icon: 'Settings',
   },
 ] as const
