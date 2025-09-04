@@ -190,8 +190,8 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-4 mb-6">
           <TabsTrigger value="tournaments" className="flex items-center space-x-2">
             <Trophy className="h-4 w-4" />
             <span>大会管理</span>
@@ -211,7 +211,7 @@ export default function SettingsPage() {
         </TabsList>
 
         {/* Tournaments Tab */}
-        <TabsContent value="tournaments" className="space-y-6">
+        <TabsContent value="tournaments" className="mt-6 space-y-6">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -291,7 +291,7 @@ export default function SettingsPage() {
         </TabsContent>
 
         {/* League Settings Tab */}
-        <TabsContent value="league-settings" className="space-y-6">
+        <TabsContent value="league-settings" className="mt-6 space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
@@ -459,7 +459,7 @@ export default function SettingsPage() {
         </TabsContent>
 
         {/* Public Page Settings Tab */}
-        <TabsContent value="public-page" className="space-y-6">
+        <TabsContent value="public-page" className="mt-6 space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
@@ -627,7 +627,7 @@ export default function SettingsPage() {
         </TabsContent>
 
         {/* System Settings Tab */}
-        <TabsContent value="system" className="space-y-6">
+        <TabsContent value="system" className="mt-6 space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
