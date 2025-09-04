@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -14,7 +15,6 @@ import {
   Filter, 
   Download, 
   Copy, 
-  Eye,
   Edit,
   MoreHorizontal,
   User,
@@ -27,6 +27,7 @@ import {
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 export default function PlayersPage() {
+  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
   const [teamFilter, setTeamFilter] = useState('all')
   const [positionFilter, setPositionFilter] = useState('all')
@@ -176,6 +177,10 @@ export default function PlayersPage() {
     )
   }
 
+  const handleEditPlayer = (player: any) => {
+    router.push(`/dashboard/players/${player.id}/edit`)
+  }
+
   const filteredPlayers = players.filter(player => {
     const matchesSearch = player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          player.team.toLowerCase().includes(searchTerm.toLowerCase())
@@ -304,7 +309,7 @@ export default function PlayersPage() {
                     <TableCell className="font-medium">
                       <div className="flex items-center space-x-3">
                         <Avatar className="h-10 w-10">
-                          <AvatarImage src={player.photo} alt={player.name} />
+                          <AvatarImage src={player.photo || undefined} alt={player.name} />
                           <AvatarFallback>
                             {player.name.charAt(0)}
                           </AvatarFallback>
@@ -374,11 +379,7 @@ export default function PlayersPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            詳細
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEditPlayer(player)}>
                             <Edit className="mr-2 h-4 w-4" />
                             編集
                           </DropdownMenuItem>
