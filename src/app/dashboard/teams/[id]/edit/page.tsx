@@ -167,11 +167,52 @@ export default function TeamEditPage({ params }: { params: { id: string } }) {
         </Button>
       </div>
 
-      {/* Team Basic Info */}
+      {/* Team Stats Summary */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Trophy className="h-5 w-5" />
+            <span>戦績サマリー</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <div className="text-3xl font-bold text-primary">
+                {team?.wins + team?.losses || 0}
+              </div>
+              <div className="text-sm text-muted-foreground">試合数</div>
+            </div>
+            <div className="text-center p-4 bg-green-50 rounded-lg">
+              <div className="text-3xl font-bold text-green-600">
+                {team?.wins || 0}
+              </div>
+              <div className="text-sm text-muted-foreground">勝利数</div>
+            </div>
+            <div className="text-center p-4 bg-red-50 rounded-lg">
+              <div className="text-3xl font-bold text-red-600">
+                {team?.losses || 0}
+              </div>
+              <div className="text-sm text-muted-foreground">敗北数</div>
+            </div>
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <div className="text-3xl font-bold text-blue-600">
+                {team?.wins && team?.losses ? 
+                  ((team.wins / (team.wins + team.losses)) * 100).toFixed(1) + '%' : 
+                  '0%'
+                }
+              </div>
+              <div className="text-sm text-muted-foreground">勝率</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Team Basic Info */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Users className="h-5 w-5" />
             <span>基本情報</span>
           </CardTitle>
         </CardHeader>
@@ -325,6 +366,25 @@ export default function TeamEditPage({ params }: { params: { id: string } }) {
         </CardContent>
       </Card>
 
+      {/* Team Description */}
+      <Card>
+        <CardHeader>
+          <CardTitle>チーム説明</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Label htmlFor="description">説明</Label>
+            <textarea
+              id="description"
+              className="w-full min-h-[100px] p-3 border rounded-md resize-none"
+              value={team?.description || ''}
+              onChange={(e) => setTeam({...team, description: e.target.value})}
+              placeholder="チームの説明を入力してください..."
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Team Stats */}
       <Card>
         <CardHeader>
@@ -424,25 +484,6 @@ export default function TeamEditPage({ params }: { params: { id: string } }) {
                 </Table>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Team Description */}
-      <Card>
-        <CardHeader>
-          <CardTitle>チーム説明</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <Label htmlFor="description">説明</Label>
-            <textarea
-              id="description"
-              className="w-full min-h-[100px] p-3 border rounded-md resize-none"
-              value={team?.description || ''}
-              onChange={(e) => setTeam({...team, description: e.target.value})}
-              placeholder="チームの説明を入力してください..."
-            />
           </div>
         </CardContent>
       </Card>
