@@ -23,8 +23,7 @@ import {
   EyeOff,
   Mail,
   Phone,
-  Calendar,
-  Settings
+  Calendar
 } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
@@ -378,10 +377,6 @@ export default function StaffPage() {
                           <DropdownMenuItem onClick={() => handleEditStaff(member)}>
                             <Edit className="mr-2 h-4 w-4" />
                             編集
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Settings className="mr-2 h-4 w-4" />
-                            権限設定
                           </DropdownMenuItem>
                           <DropdownMenuItem>
                             <Copy className="mr-2 h-4 w-4" />
