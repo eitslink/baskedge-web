@@ -12,16 +12,13 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { 
   Plus, 
   Users, 
-  Trophy, 
   MapPin, 
   Search, 
   Filter, 
   Download, 
   Copy, 
   Edit,
-  MoreHorizontal,
-  Calendar,
-  Target
+  MoreHorizontal
 } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
@@ -324,14 +321,6 @@ export default function TeamsPage() {
                           <DropdownMenuItem onClick={() => handleEditTeam(team)}>
                             <Edit className="mr-2 h-4 w-4" />
                             編集
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Users className="mr-2 h-4 w-4" />
-                            選手一覧
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Trophy className="mr-2 h-4 w-4" />
-                            戦績
                           </DropdownMenuItem>
                           <DropdownMenuItem>
                             <Copy className="mr-2 h-4 w-4" />
