@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -17,7 +18,6 @@ import {
   Filter, 
   Download, 
   Copy, 
-  Eye,
   Edit,
   MoreHorizontal,
   Calendar,
@@ -26,6 +26,7 @@ import {
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 export default function TeamsPage() {
+  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [leagueFilter, setLeagueFilter] = useState('all')
@@ -126,6 +127,10 @@ export default function TeamsPage() {
     if (percentage >= 70) return 'text-green-600'
     if (percentage >= 50) return 'text-blue-600'
     return 'text-red-600'
+  }
+
+  const handleEditTeam = (team: any) => {
+    router.push(`/dashboard/teams/${team.id}/edit`)
   }
 
   const filteredTeams = teams.filter(team => {
@@ -316,11 +321,7 @@ export default function TeamsPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            詳細
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEditTeam(team)}>
                             <Edit className="mr-2 h-4 w-4" />
                             編集
                           </DropdownMenuItem>
