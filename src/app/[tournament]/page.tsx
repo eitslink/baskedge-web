@@ -197,7 +197,7 @@ export default async function TournamentPublicPage({ params }: TournamentPagePro
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
             {/* Tournament Info & Status */}
             <div className="bg-white rounded-lg shadow p-6">
@@ -562,7 +562,7 @@ export default async function TournamentPublicPage({ params }: TournamentPagePro
 
       {/* Footer */}
       <footer className="bg-gray-50 border-t mt-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
             <p className="text-gray-600 mb-4">
               {tournament.publicPageSettings.footerText}
