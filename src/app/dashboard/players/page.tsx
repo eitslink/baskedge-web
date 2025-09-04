@@ -21,7 +21,6 @@ import {
   Target,
   TrendingUp,
   Users,
-  Calendar,
   MapPin
 } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -382,14 +381,6 @@ export default function PlayersPage() {
                           <DropdownMenuItem onClick={() => handleEditPlayer(player)}>
                             <Edit className="mr-2 h-4 w-4" />
                             編集
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Calendar className="mr-2 h-4 w-4" />
-                            出場履歴
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Target className="mr-2 h-4 w-4" />
-                            成績詳細
                           </DropdownMenuItem>
                           <DropdownMenuItem>
                             <Copy className="mr-2 h-4 w-4" />
