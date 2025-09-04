@@ -332,7 +332,11 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
               {gameResults.length > 0 ? (
                 <div className="space-y-4">
                   {gameResults.map((game, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                    <a 
+                      key={index} 
+                      href={`/${params.tournament}/${params.season}/games/game-${index + 1}`}
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                    >
                       <div className="flex items-center space-x-4">
                         <span className="text-sm text-gray-500">{game.date}</span>
                         <div className="flex items-center space-x-2">
@@ -362,7 +366,7 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
                           {game.awayScore}
                         </span>
                       </div>
-                    </div>
+                    </a>
                   ))}
                 </div>
               ) : (
