@@ -5,8 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { 
   Plus, 
   Calendar, 
@@ -16,9 +18,9 @@ import {
   Filter, 
   Download, 
   Copy, 
-  Eye,
   Edit,
-  MoreHorizontal
+  MoreHorizontal,
+  X
 } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
@@ -27,6 +29,8 @@ export default function GamesPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [leagueFilter, setLeagueFilter] = useState('all')
   const [seasonFilter, setSeasonFilter] = useState('all')
+  const [editingGame, setEditingGame] = useState<any>(null)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
   const games = [
     {
@@ -132,6 +136,23 @@ export default function GamesPage() {
       )
     }
     return <span className="text-muted-foreground">-</span>
+  }
+
+  const handleEditGame = (game: any) => {
+    setEditingGame(game)
+    setIsEditDialogOpen(true)
+  }
+
+  const handleSaveGame = () => {
+    // ここで実際の保存処理を行う
+    console.log('Saving game:', editingGame)
+    setIsEditDialogOpen(false)
+    setEditingGame(null)
+  }
+
+  const handleCancelEdit = () => {
+    setIsEditDialogOpen(false)
+    setEditingGame(null)
   }
 
   const filteredGames = games.filter(game => {
@@ -303,11 +324,7 @@ export default function GamesPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            詳細
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEditGame(game)}>
                             <Edit className="mr-2 h-4 w-4" />
                             編集
                           </DropdownMenuItem>
@@ -325,6 +342,155 @@ export default function GamesPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Edit Game Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>試合編集</DialogTitle>
+            <DialogDescription>
+              試合の詳細情報を編集できます
+            </DialogDescription>
+          </DialogHeader>
+          {editingGame && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="homeTeam">ホームチーム</Label>
+                  <Input
+                    id="homeTeam"
+                    value={editingGame.homeTeam}
+                    onChange={(e) => setEditingGame({...editingGame, homeTeam: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="awayTeam">アウェイチーム</Label>
+                  <Input
+                    id="awayTeam"
+                    value={editingGame.awayTeam}
+                    onChange={(e) => setEditingGame({...editingGame, awayTeam: e.target.value})}
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="date">日付</Label>
+                  <Input
+                    id="date"
+                    type="date"
+                    value={editingGame.date}
+                    onChange={(e) => setEditingGame({...editingGame, date: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="time">時間</Label>
+                  <Input
+                    id="time"
+                    type="time"
+                    value={editingGame.time}
+                    onChange={(e) => setEditingGame({...editingGame, time: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="venue">会場</Label>
+                  <Input
+                    id="venue"
+                    value={editingGame.venue}
+                    onChange={(e) => setEditingGame({...editingGame, venue: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="court">コート</Label>
+                  <Input
+                    id="court"
+                    value={editingGame.court}
+                    onChange={(e) => setEditingGame({...editingGame, court: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="status">ステータス</Label>
+                  <Select
+                    value={editingGame.status}
+                    onValueChange={(value) => setEditingGame({...editingGame, status: value})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="scheduled">予定</SelectItem>
+                      <SelectItem value="live">ライブ</SelectItem>
+                      <SelectItem value="completed">完了</SelectItem>
+                      <SelectItem value="cancelled">中止</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="league">大会</Label>
+                  <Select
+                    value={editingGame.league}
+                    onValueChange={(value) => setEditingGame({...editingGame, league: value})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="NBA">NBA</SelectItem>
+                      <SelectItem value="Bリーグ">Bリーグ</SelectItem>
+                      <SelectItem value="Wリーグ">Wリーグ</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="season">シーズン</Label>
+                  <Input
+                    id="season"
+                    value={editingGame.season}
+                    onChange={(e) => setEditingGame({...editingGame, season: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              {(editingGame.status === 'completed' || editingGame.status === 'live') && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="homeScore">ホームスコア</Label>
+                    <Input
+                      id="homeScore"
+                      type="number"
+                      value={editingGame.homeScore || ''}
+                      onChange={(e) => setEditingGame({...editingGame, homeScore: parseInt(e.target.value) || 0})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="awayScore">アウェイスコア</Label>
+                    <Input
+                      id="awayScore"
+                      type="number"
+                      value={editingGame.awayScore || ''}
+                      onChange={(e) => setEditingGame({...editingGame, awayScore: parseInt(e.target.value) || 0})}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCancelEdit}>
+              キャンセル
+            </Button>
+            <Button onClick={handleSaveGame}>
+              保存
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
