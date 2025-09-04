@@ -23,9 +23,9 @@ import {
 } from 'lucide-react'
 
 interface TournamentPageProps {
-  params: {
+  params: Promise<{
     tournament: string
-  }
+  }>
 }
 
 // Mock data - 実際の実装ではデータベースから取得
@@ -157,15 +157,26 @@ const getTournamentData = async (permalink: string) => {
 export default function TournamentPublicPage({ params }: TournamentPageProps) {
   const [tournament, setTournament] = React.useState<any>(null)
   const [loading, setLoading] = React.useState(true)
+  const [resolvedParams, setResolvedParams] = React.useState<{ tournament: string } | null>(null)
 
   React.useEffect(() => {
-    const fetchData = async () => {
-      const data = await getTournamentData(params.tournament)
-      setTournament(data)
-      setLoading(false)
+    const resolveParams = async () => {
+      const resolved = await params
+      setResolvedParams(resolved)
     }
-    fetchData()
-  }, [params.tournament])
+    resolveParams()
+  }, [params])
+
+  React.useEffect(() => {
+    if (resolvedParams) {
+      const fetchData = async () => {
+        const data = await getTournamentData(resolvedParams.tournament)
+        setTournament(data)
+        setLoading(false)
+      }
+      fetchData()
+    }
+  }, [resolvedParams])
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
@@ -360,7 +371,7 @@ export default function TournamentPublicPage({ params }: TournamentPageProps) {
                 <div>
                   <h3 className="text-lg font-semibold mb-3">大会ルール</h3>
                   <ul className="list-disc list-inside space-y-1 text-gray-600">
-                    {tournament.regulations.rules.map((rule, index) => (
+                    {tournament.regulations.rules.map((rule: any, index: number) => (
                       <li key={index}>{rule}</li>
                     ))}
                   </ul>
@@ -368,7 +379,7 @@ export default function TournamentPublicPage({ params }: TournamentPageProps) {
                 <div>
                   <h3 className="text-lg font-semibold mb-3">ペナルティ</h3>
                   <ul className="list-disc list-inside space-y-1 text-gray-600">
-                    {tournament.regulations.penalties.map((penalty, index) => (
+                    {tournament.regulations.penalties.map((penalty: any, index: number) => (
                       <li key={index}>{penalty}</li>
                     ))}
                   </ul>
@@ -389,7 +400,7 @@ export default function TournamentPublicPage({ params }: TournamentPageProps) {
                 各シーズン
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {tournament.seasons.map((season) => (
+                {tournament.seasons.map((season: any) => (
                   <div key={season.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="font-semibold">{season.name}</h3>
@@ -410,7 +421,7 @@ export default function TournamentPublicPage({ params }: TournamentPageProps) {
                     </p>
                     {season.isPublic && season.status === 'active' && (
                       <a 
-                        href={`/${params.tournament}/${season.id}`}
+                        href={`/${resolvedParams?.tournament}/${season.id}`}
                         className="inline-flex items-center text-sm font-medium"
                         style={{ color: 'var(--secondary-color)' }}
                       >
@@ -430,7 +441,7 @@ export default function TournamentPublicPage({ params }: TournamentPageProps) {
                 出場チーム一覧
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {tournament.participatingTeams.map((team, index) => (
+                {tournament.participatingTeams.map((team: any, index: number) => (
                   <div key={index} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                     <div className="flex items-center space-x-3">
                       <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
@@ -456,7 +467,7 @@ export default function TournamentPublicPage({ params }: TournamentPageProps) {
                 スポンサー一覧
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {tournament.sponsors.map((sponsor, index) => (
+                {tournament.sponsors.map((sponsor: any, index: number) => (
                   <div key={index} className="border rounded-lg p-4 text-center hover:shadow-md transition-shadow">
                     <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-3 flex items-center justify-center">
                       <span className="text-sm font-bold" style={{ color: 'var(--primary-color)' }}>

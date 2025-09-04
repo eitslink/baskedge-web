@@ -50,7 +50,7 @@ interface GameStats {
   freeThrowsAttempted: number
 }
 
-export default function GameEditPage({ params }: { params: { id: string } }) {
+export default function GameEditPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const [game, setGame] = useState<any>(null)
   const [homePlayers, setHomePlayers] = useState<Player[]>([])
@@ -58,14 +58,24 @@ export default function GameEditPage({ params }: { params: { id: string } }) {
   const [homeStats, setHomeStats] = useState<GameStats[]>([])
   const [awayStats, setAwayStats] = useState<GameStats[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null)
   const [quarterScores, setQuarterScores] = useState({
     home: { q1: 0, q2: 0, q3: 0, q4: 0, ot: 0 },
     away: { q1: 0, q2: 0, q3: 0, q4: 0, ot: 0 }
   })
 
+  // paramsを解決
+  useEffect(() => {
+    const resolveParams = async () => {
+      const resolved = await params
+      setResolvedParams(resolved)
+    }
+    resolveParams()
+  }, [params])
+
   // ダミーデータ
   const mockGame = {
-    id: parseInt(params.id),
+    id: resolvedParams ? parseInt(resolvedParams.id) : 0,
     homeTeam: 'レイカーズ',
     awayTeam: 'ウォリアーズ',
     date: '2024-01-15',
@@ -148,7 +158,7 @@ export default function GameEditPage({ params }: { params: { id: string } }) {
     setHomeStats(initialHomeStats)
     setAwayStats(initialAwayStats)
     setIsLoading(false)
-  }, [params.id])
+  }, [resolvedParams])
 
   const updatePlayerStat = (playerId: number, stat: keyof GameStats, value: number, isHome: boolean) => {
     const updateStats = (stats: GameStats[]) => 

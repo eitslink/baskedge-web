@@ -5,11 +5,11 @@ import { notFound } from 'next/navigation'
 import { Calendar, Clock, MapPin, Trophy, Target, BarChart3, MessageCircle, ExternalLink, Play, Share2, Bookmark } from 'lucide-react'
 
 interface GameDetailPageProps {
-  params: {
+  params: Promise<{
     tournament: string
     season: string
     gameId: string
-  }
+  }>
 }
 
 // Mock data - 実際の実装ではデータベースから取得
@@ -107,15 +107,26 @@ const getGameDetailData = async (permalink: string, season: string, gameId: stri
 export default function GameDetailPage({ params }: GameDetailPageProps) {
   const [data, setData] = React.useState<any>(null)
   const [loading, setLoading] = React.useState(true)
+  const [resolvedParams, setResolvedParams] = React.useState<{ tournament: string; season: string; gameId: string } | null>(null)
 
   React.useEffect(() => {
-    const fetchData = async () => {
-      const result = await getGameDetailData(params.tournament, params.season, params.gameId)
-      setData(result)
-      setLoading(false)
+    const resolveParams = async () => {
+      const resolved = await params
+      setResolvedParams(resolved)
     }
-    fetchData()
-  }, [params.tournament, params.season, params.gameId])
+    resolveParams()
+  }, [params])
+
+  React.useEffect(() => {
+    if (resolvedParams) {
+      const fetchData = async () => {
+        const result = await getGameDetailData(resolvedParams.tournament, resolvedParams.season, resolvedParams.gameId)
+        setData(result)
+        setLoading(false)
+      }
+      fetchData()
+    }
+  }, [resolvedParams])
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>

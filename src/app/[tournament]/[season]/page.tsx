@@ -6,10 +6,10 @@ import { motion } from 'framer-motion'
 import { Trophy, Target, Users, Calendar, Award, TrendingUp, Star, ExternalLink } from 'lucide-react'
 
 interface SeasonPageProps {
-  params: {
+  params: Promise<{
     tournament: string
     season: string
-  }
+  }>
 }
 
 // Mock data - 実際の実装ではデータベースから取得
@@ -164,15 +164,26 @@ const getTournamentSeasonData = async (permalink: string, season: string) => {
 export default function SeasonPublicPage({ params }: SeasonPageProps) {
   const [data, setData] = React.useState<any>(null)
   const [loading, setLoading] = React.useState(true)
+  const [resolvedParams, setResolvedParams] = React.useState<{ tournament: string; season: string } | null>(null)
 
   React.useEffect(() => {
-    const fetchData = async () => {
-      const result = await getTournamentSeasonData(params.tournament, params.season)
-      setData(result)
-      setLoading(false)
+    const resolveParams = async () => {
+      const resolved = await params
+      setResolvedParams(resolved)
     }
-    fetchData()
-  }, [params.tournament, params.season])
+    resolveParams()
+  }, [params])
+
+  React.useEffect(() => {
+    if (resolvedParams) {
+      const fetchData = async () => {
+        const result = await getTournamentSeasonData(resolvedParams.tournament, resolvedParams.season)
+        setData(result)
+        setLoading(false)
+      }
+      fetchData()
+    }
+  }, [resolvedParams])
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
@@ -387,7 +398,7 @@ export default function SeasonPublicPage({ params }: SeasonPageProps) {
                   {gameResults.map((game: any, index: number) => (
                     <motion.a 
                       key={index} 
-                      href={`/${params.tournament}/${params.season}/games/game-${index + 1}`}
+                      href={`/${resolvedParams?.tournament}/${resolvedParams?.season}/games/game-${index + 1}`}
                       className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                       whileHover={{ scale: 1.02, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}
                       whileTap={{ scale: 0.98 }}

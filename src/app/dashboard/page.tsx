@@ -43,7 +43,7 @@ export default function DashboardPage() {
       title: '今週の試合',
       value: '3',
       change: '明日2試合',
-      changeType: 'neutral' as const,
+      changeType: 'positive' as const,
       icon: Calendar,
     },
   ]
@@ -161,7 +161,7 @@ export default function DashboardPage() {
                 >
                   {stat.change}
                 </span>
-                {stat.changeType !== 'neutral' && ' 前月比'}
+                {' 前月比'}
               </p>
             </CardContent>
           </Card>

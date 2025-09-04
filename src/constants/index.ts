@@ -97,7 +97,7 @@ export const NAVIGATION_ITEMS = [
   {
     title: '審判',
     href: '/dashboard/referees',
-    icon: 'Whistle',
+    icon: 'Gavel',
   },
   {
     title: 'スポンサー',

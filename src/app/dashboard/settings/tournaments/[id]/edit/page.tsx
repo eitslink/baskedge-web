@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -87,13 +87,23 @@ interface Season {
   createdAt: string
 }
 
-export default function TournamentEditPage({ params }: { params: { id: string } }) {
+export default function TournamentEditPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState('basic')
+  const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null)
+  
+  // paramsを解決
+  useEffect(() => {
+    const resolveParams = async () => {
+      const resolved = await params
+      setResolvedParams(resolved)
+    }
+    resolveParams()
+  }, [params])
   
   // Mock data
   const [tournament, setTournament] = useState<Tournament>({
-    id: parseInt(params.id),
+    id: resolvedParams ? parseInt(resolvedParams.id) : 0,
     name: '2024春季リーグ戦',
     type: 'league',
     status: 'active',
@@ -526,7 +536,7 @@ export default function TournamentEditPage({ params }: { params: { id: string } 
                       <Button 
                         variant="outline" 
                         size="sm"
-                        onClick={() => window.location.href = `/dashboard/settings/tournaments/${params.id}/seasons/${season.id}/edit`}
+                        onClick={() => window.location.href = `/dashboard/settings/tournaments/${resolvedParams?.id}/seasons/${season.id}/edit`}
                       >
                         <Edit className="mr-2 h-4 w-4" />
                         編集

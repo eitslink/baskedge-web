@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -43,22 +43,32 @@ interface Tournament {
 export default function SeasonEditPage({ 
   params 
 }: { 
-  params: { 
+  params: Promise<{ 
     id: string
     seasonId: string 
-  } 
+  }> 
 }) {
   const router = useRouter()
+  const [resolvedParams, setResolvedParams] = useState<{ id: string; seasonId: string } | null>(null)
+  
+  // paramsを解決
+  useEffect(() => {
+    const resolveParams = async () => {
+      const resolved = await params
+      setResolvedParams(resolved)
+    }
+    resolveParams()
+  }, [params])
   
   // Mock data
   const [tournament] = useState<Tournament>({
-    id: parseInt(params.id),
+    id: resolvedParams ? parseInt(resolvedParams.id) : 0,
     name: '2024春季リーグ戦',
     permalink: 'xxxleague'
   })
 
   const [season, setSeason] = useState<Season>({
-    id: params.seasonId,
+    id: resolvedParams?.seasonId || '',
     name: '2024春',
     displayName: '2024春季',
     startDate: '2024-03-01',
@@ -90,11 +100,11 @@ export default function SeasonEditPage({
   const handleSave = () => {
     console.log('Saving season settings...')
     // Save logic here
-    router.push(`/dashboard/settings/tournaments/${params.id}/edit?tab=seasons`)
+    router.push(`/dashboard/settings/tournaments/${resolvedParams?.id}/edit?tab=seasons`)
   }
 
   const handleCancel = () => {
-    router.push(`/dashboard/settings/tournaments/${params.id}/edit?tab=seasons`)
+    router.push(`/dashboard/settings/tournaments/${resolvedParams?.id}/edit?tab=seasons`)
   }
 
   const handlePreview = () => {

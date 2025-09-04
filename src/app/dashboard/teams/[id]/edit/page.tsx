@@ -44,17 +44,27 @@ interface GameHistory {
   season: string
 }
 
-export default function TeamEditPage({ params }: { params: { id: string } }) {
+export default function TeamEditPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const [team, setTeam] = useState<any>(null)
   const [players, setPlayers] = useState<Player[]>([])
   const [gameHistory, setGameHistory] = useState<GameHistory[]>([])
   const [selectedSeason, setSelectedSeason] = useState('2024')
   const [isLoading, setIsLoading] = useState(true)
+  const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null)
+
+  // paramsを解決
+  useEffect(() => {
+    const resolveParams = async () => {
+      const resolved = await params
+      setResolvedParams(resolved)
+    }
+    resolveParams()
+  }, [params])
 
   // ダミーデータ
   const mockTeam = {
-    id: parseInt(params.id),
+    id: resolvedParams ? parseInt(resolvedParams.id) : 0,
     name: 'レイカーズ',
     logo: null,
     wins: 15,
@@ -84,7 +94,7 @@ export default function TeamEditPage({ params }: { params: { id: string } }) {
     { id: 7, name: '中村五郎', jerseyNumber: 15, position: 'PF', age: 29, height: '206cm', weight: '110kg', status: 'active', season: '2023' },
   ]
 
-  const mockGameHistory = [
+  const mockGameHistory: GameHistory[] = [
     { id: 1, date: '2024-01-15', opponent: 'ウォリアーズ', homeAway: 'home', result: 'win', score: '98-102', season: '2024' },
     { id: 2, date: '2024-01-12', opponent: 'セルティックス', homeAway: 'away', result: 'loss', score: '115-108', season: '2024' },
     { id: 3, date: '2024-01-10', opponent: 'ヒート', homeAway: 'home', result: 'win', score: '112-105', season: '2024' },
@@ -99,7 +109,7 @@ export default function TeamEditPage({ params }: { params: { id: string } }) {
     setPlayers(mockPlayers)
     setGameHistory(mockGameHistory)
     setIsLoading(false)
-  }, [params.id])
+  }, [resolvedParams])
 
   const filteredPlayers = players.filter(player => player.season === selectedSeason)
   const filteredGameHistory = gameHistory.filter(game => game.season === selectedSeason)

@@ -10,7 +10,7 @@ import {
   Users,
   User,
   UserCheck,
-  Whistle,
+  Gavel,
   Heart,
   Settings,
 } from 'lucide-react'
@@ -21,7 +21,7 @@ const iconMap: Record<string, React.ComponentType<any>> = {
   Users,
   User,
   UserCheck,
-  Whistle,
+  Gavel,
   Heart,
   Settings,
 }
