@@ -18,7 +18,11 @@ import {
   Save,
   Eye,
   Calendar,
-  Settings
+  Settings,
+  Plus,
+  Edit,
+  Trash2,
+  Link
 } from 'lucide-react'
 
 interface Tournament {
@@ -67,6 +71,19 @@ interface PublicPageSettings {
   seasonPermalinks: {
     [season: string]: string
   }
+}
+
+interface Season {
+  id: string
+  name: string
+  displayName: string
+  startDate: string
+  endDate: string
+  status: 'draft' | 'active' | 'completed' | 'cancelled'
+  description: string
+  permalink: string
+  isPublic: boolean
+  createdAt: string
 }
 
 export default function TournamentEditPage({ params }: { params: { id: string } }) {
@@ -131,6 +148,56 @@ export default function TournamentEditPage({ params }: { params: { id: string } 
     '2024春', '2024夏', '2024秋', '2024冬',
     '2025春', '2025夏', '2025秋', '2025冬'
   ])
+
+  const [seasons, setSeasons] = useState<Season[]>([
+    {
+      id: '1',
+      name: '2024春',
+      displayName: '2024春季',
+      startDate: '2024-03-01',
+      endDate: '2024-05-31',
+      status: 'active',
+      description: '2024年春季シーズンです。',
+      permalink: '2024-spring',
+      isPublic: true,
+      createdAt: '2024-02-01'
+    },
+    {
+      id: '2',
+      name: '2024夏',
+      displayName: '2024夏季',
+      startDate: '2024-06-01',
+      endDate: '2024-08-31',
+      status: 'draft',
+      description: '2024年夏季シーズンです。',
+      permalink: '2024-summer',
+      isPublic: false,
+      createdAt: '2024-05-01'
+    },
+    {
+      id: '3',
+      name: '2025春',
+      displayName: '2025春季',
+      startDate: '2025-03-01',
+      endDate: '2025-05-31',
+      status: 'draft',
+      description: '2025年春季シーズンです。',
+      permalink: '2025-spring',
+      isPublic: false,
+      createdAt: '2024-12-01'
+    }
+  ])
+
+  const [newSeason, setNewSeason] = useState<Partial<Season>>({
+    name: '',
+    displayName: '',
+    startDate: '',
+    endDate: '',
+    status: 'draft',
+    description: '',
+    permalink: '',
+    isPublic: false
+  })
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -197,10 +264,14 @@ export default function TournamentEditPage({ params }: { params: { id: string } 
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4 mb-6">
+        <TabsList className="grid w-full grid-cols-5 mb-6">
           <TabsTrigger value="basic" className="flex items-center space-x-2">
             <Settings className="h-4 w-4" />
             <span>基本情報</span>
+          </TabsTrigger>
+          <TabsTrigger value="seasons" className="flex items-center space-x-2">
+            <Calendar className="h-4 w-4" />
+            <span>シーズン設定</span>
           </TabsTrigger>
           <TabsTrigger value="league-settings" className="flex items-center space-x-2">
             <Users className="h-4 w-4" />
@@ -367,6 +438,267 @@ export default function TournamentEditPage({ params }: { params: { id: string } 
                   })}
                 />
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Seasons Tab */}
+        <TabsContent value="seasons" className="mt-6 space-y-6">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Calendar className="h-5 w-5" />
+                    <span>シーズン管理</span>
+                  </CardTitle>
+                  <CardDescription>
+                    大会のシーズンを管理し、パーマリンクを設定できます
+                  </CardDescription>
+                </div>
+                <Button onClick={() => setNewSeason({
+                  name: '',
+                  displayName: '',
+                  startDate: '',
+                  endDate: '',
+                  status: 'draft',
+                  description: '',
+                  permalink: '',
+                  isPublic: false
+                })}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  新しいシーズン
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Seasons List */}
+              <div className="space-y-4">
+                {seasons.map((season) => (
+                  <div key={season.id} className="border rounded-lg p-4 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div>
+                          <h3 className="font-semibold">{season.displayName}</h3>
+                          <p className="text-sm text-muted-foreground">{season.description}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {getStatusBadge(season.status)}
+                        <Badge variant={season.isPublic ? "default" : "secondary"}>
+                          {season.isPublic ? "公開" : "非公開"}
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                      <div>
+                        <Label className="text-muted-foreground">期間</Label>
+                        <div>{season.startDate} 〜 {season.endDate}</div>
+                      </div>
+                      <div>
+                        <Label className="text-muted-foreground">パーマリンク</Label>
+                        <div className="font-mono text-xs">
+                          {publicPageSettings.permalink || 'xxxleague'}.com/{season.permalink}/
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-muted-foreground">シーズン名</Label>
+                        <div>{season.name}</div>
+                      </div>
+                      <div>
+                        <Label className="text-muted-foreground">作成日</Label>
+                        <div>{season.createdAt}</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <Button variant="outline" size="sm">
+                        <Edit className="mr-2 h-4 w-4" />
+                        編集
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Link className="mr-2 h-4 w-4" />
+                        公開ページ
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        削除
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* New Season Form */}
+              {newSeason.name && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>新しいシーズンの追加</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="newSeasonName">シーズン名</Label>
+                        <Input
+                          id="newSeasonName"
+                          value={newSeason.name || ''}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewSeason({
+                            ...newSeason,
+                            name: e.target.value
+                          })}
+                          placeholder="2025春"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="newSeasonDisplayName">表示名</Label>
+                        <Input
+                          id="newSeasonDisplayName"
+                          value={newSeason.displayName || ''}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewSeason({
+                            ...newSeason,
+                            displayName: e.target.value
+                          })}
+                          placeholder="2025春季"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="newSeasonStartDate">開始日</Label>
+                        <Input
+                          id="newSeasonStartDate"
+                          type="date"
+                          value={newSeason.startDate || ''}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewSeason({
+                            ...newSeason,
+                            startDate: e.target.value
+                          })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="newSeasonEndDate">終了日</Label>
+                        <Input
+                          id="newSeasonEndDate"
+                          type="date"
+                          value={newSeason.endDate || ''}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewSeason({
+                            ...newSeason,
+                            endDate: e.target.value
+                          })}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="newSeasonDescription">説明</Label>
+                      <textarea
+                        id="newSeasonDescription"
+                        value={newSeason.description || ''}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewSeason({
+                          ...newSeason,
+                          description: e.target.value
+                        })}
+                        rows={3}
+                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        placeholder="シーズンの説明を入力してください"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="newSeasonPermalink">パーマリンク</Label>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm text-muted-foreground">
+                            {publicPageSettings.permalink || 'xxxleague'}.com/
+                          </span>
+                          <Input
+                            id="newSeasonPermalink"
+                            value={newSeason.permalink || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewSeason({
+                              ...newSeason,
+                              permalink: e.target.value
+                            })}
+                            placeholder="2025-spring"
+                            className="flex-1"
+                          />
+                          <span className="text-sm text-muted-foreground">/</span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="newSeasonStatus">ステータス</Label>
+                        <Select 
+                          value={newSeason.status || 'draft'} 
+                          onValueChange={(value: 'draft' | 'active' | 'completed' | 'cancelled') => setNewSeason({
+                            ...newSeason,
+                            status: value
+                          })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="draft">下書き</SelectItem>
+                            <SelectItem value="active">活動中</SelectItem>
+                            <SelectItem value="completed">完了</SelectItem>
+                            <SelectItem value="cancelled">キャンセル</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="newSeasonIsPublic">公開設定</Label>
+                        <p className="text-sm text-muted-foreground">
+                          このシーズンを公開ページで表示する
+                        </p>
+                      </div>
+                      <Switch
+                        id="newSeasonIsPublic"
+                        checked={newSeason.isPublic || false}
+                        onCheckedChange={(checked) => setNewSeason({
+                          ...newSeason,
+                          isPublic: checked
+                        })}
+                      />
+                    </div>
+
+                    <div className="flex justify-end space-x-2">
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setNewSeason({})}
+                      >
+                        キャンセル
+                      </Button>
+                      <Button 
+                        onClick={() => {
+                          if (newSeason.name && newSeason.displayName && newSeason.permalink) {
+                            const season: Season = {
+                              id: Date.now().toString(),
+                              name: newSeason.name,
+                              displayName: newSeason.displayName,
+                              startDate: newSeason.startDate || '',
+                              endDate: newSeason.endDate || '',
+                              status: newSeason.status || 'draft',
+                              description: newSeason.description || '',
+                              permalink: newSeason.permalink,
+                              isPublic: newSeason.isPublic || false,
+                              createdAt: new Date().toISOString().split('T')[0]
+                            }
+                            setSeasons([...seasons, season])
+                            setNewSeason({})
+                          }
+                        }}
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        シーズンを追加
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
