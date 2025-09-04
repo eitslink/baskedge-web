@@ -1,3 +1,4 @@
+import React from 'react'
 import { notFound } from 'next/navigation'
 import { Calendar, Clock, MapPin, Trophy, Target, BarChart3, MessageCircle, ExternalLink, Play, Share2, Bookmark } from 'lucide-react'
 

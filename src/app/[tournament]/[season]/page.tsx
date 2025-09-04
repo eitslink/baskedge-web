@@ -1,3 +1,4 @@
+import React from 'react'
 import { notFound } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Trophy, Target, Users, Calendar, Award, TrendingUp, Star, ExternalLink } from 'lucide-react'

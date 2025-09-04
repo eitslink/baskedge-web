@@ -1,3 +1,4 @@
+import React from 'react'
 import { notFound } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { 
@@ -357,10 +358,16 @@ export default async function TournamentPublicPage({ params }: TournamentPagePro
                   </ul>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Seasons */}
-            <div className="bg-white rounded-lg shadow p-6">
+            <motion.div 
+              className="bg-white rounded-lg shadow p-6"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
               <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--primary-color)' }}>
                 <Calendar className="inline h-6 w-6 mr-2" />
                 各シーズン
@@ -398,7 +405,7 @@ export default async function TournamentPublicPage({ params }: TournamentPagePro
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
             {/* Participating Teams */}
             <div className="bg-white rounded-lg shadow p-6">
