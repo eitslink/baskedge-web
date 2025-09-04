@@ -31,12 +31,25 @@ interface Player {
   height: string
   weight: string
   status: string
+  season: string
+}
+
+interface GameHistory {
+  id: number
+  date: string
+  opponent: string
+  homeAway: 'home' | 'away'
+  result: 'win' | 'loss'
+  score: string
+  season: string
 }
 
 export default function TeamEditPage({ params }: { params: { id: string } }) {
   const router = useRouter()
   const [team, setTeam] = useState<any>(null)
   const [players, setPlayers] = useState<Player[]>([])
+  const [gameHistory, setGameHistory] = useState<GameHistory[]>([])
+  const [selectedSeason, setSelectedSeason] = useState('2024')
   const [isLoading, setIsLoading] = useState(true)
 
   // ダミーデータ
@@ -62,18 +75,34 @@ export default function TeamEditPage({ params }: { params: { id: string } }) {
   }
 
   const mockPlayers = [
-    { id: 1, name: '田中太郎', jerseyNumber: 23, position: 'SF', age: 28, height: '203cm', weight: '98kg', status: 'active' },
-    { id: 2, name: '佐藤花子', jerseyNumber: 30, position: 'PG', age: 26, height: '191cm', weight: '86kg', status: 'active' },
-    { id: 3, name: '鈴木一郎', jerseyNumber: 7, position: 'PF', age: 30, height: '208cm', weight: '112kg', status: 'active' },
-    { id: 4, name: '山田次郎', jerseyNumber: 6, position: 'SG', age: 24, height: '196cm', weight: '92kg', status: 'active' },
-    { id: 5, name: '高橋三郎', jerseyNumber: 11, position: 'C', age: 32, height: '213cm', weight: '125kg', status: 'injured' },
+    { id: 1, name: '田中太郎', jerseyNumber: 23, position: 'SF', age: 28, height: '203cm', weight: '98kg', status: 'active', season: '2024' },
+    { id: 2, name: '佐藤花子', jerseyNumber: 30, position: 'PG', age: 26, height: '191cm', weight: '86kg', status: 'active', season: '2024' },
+    { id: 3, name: '鈴木一郎', jerseyNumber: 7, position: 'PF', age: 30, height: '208cm', weight: '112kg', status: 'active', season: '2024' },
+    { id: 4, name: '山田次郎', jerseyNumber: 6, position: 'SG', age: 24, height: '196cm', weight: '92kg', status: 'active', season: '2024' },
+    { id: 5, name: '高橋三郎', jerseyNumber: 11, position: 'C', age: 32, height: '213cm', weight: '125kg', status: 'injured', season: '2024' },
+    { id: 6, name: '伊藤四郎', jerseyNumber: 8, position: 'SG', age: 25, height: '194cm', weight: '90kg', status: 'active', season: '2023' },
+    { id: 7, name: '中村五郎', jerseyNumber: 15, position: 'PF', age: 29, height: '206cm', weight: '110kg', status: 'active', season: '2023' },
+  ]
+
+  const mockGameHistory = [
+    { id: 1, date: '2024-01-15', opponent: 'ウォリアーズ', homeAway: 'home', result: 'win', score: '98-102', season: '2024' },
+    { id: 2, date: '2024-01-12', opponent: 'セルティックス', homeAway: 'away', result: 'loss', score: '115-108', season: '2024' },
+    { id: 3, date: '2024-01-10', opponent: 'ヒート', homeAway: 'home', result: 'win', score: '112-105', season: '2024' },
+    { id: 4, date: '2024-01-08', opponent: 'ネッツ', homeAway: 'away', result: 'win', score: '95-88', season: '2024' },
+    { id: 5, date: '2024-01-05', opponent: 'バックス', homeAway: 'home', result: 'loss', score: '120-115', season: '2024' },
+    { id: 6, date: '2023-12-28', opponent: 'ウォリアーズ', homeAway: 'away', result: 'win', score: '105-98', season: '2023' },
+    { id: 7, date: '2023-12-25', opponent: 'セルティックス', homeAway: 'home', result: 'loss', score: '110-108', season: '2023' },
   ]
 
   useEffect(() => {
     setTeam(mockTeam)
     setPlayers(mockPlayers)
+    setGameHistory(mockGameHistory)
     setIsLoading(false)
   }, [params.id])
+
+  const filteredPlayers = players.filter(player => player.season === selectedSeason)
+  const filteredGameHistory = gameHistory.filter(game => game.season === selectedSeason)
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -305,32 +334,94 @@ export default function TeamEditPage({ params }: { params: { id: string } }) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="wins">勝利数</Label>
-              <Input
-                id="wins"
-                type="number"
-                value={team?.wins || ''}
-                onChange={(e) => setTeam({...team, wins: parseInt(e.target.value) || 0})}
-              />
+          <div className="space-y-6">
+            {/* Season Selector */}
+            <div className="flex items-center space-x-4">
+              <Label htmlFor="season">シーズン</Label>
+              <Select value={selectedSeason} onValueChange={setSelectedSeason}>
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="2024">2024</SelectItem>
+                  <SelectItem value="2023">2023</SelectItem>
+                  <SelectItem value="2022">2022</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="losses">敗北数</Label>
-              <Input
-                id="losses"
-                type="number"
-                value={team?.losses || ''}
-                onChange={(e) => setTeam({...team, losses: parseInt(e.target.value) || 0})}
-              />
+
+            {/* Win/Loss Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="wins">勝利数</Label>
+                <Input
+                  id="wins"
+                  type="number"
+                  value={team?.wins || ''}
+                  onChange={(e) => setTeam({...team, wins: parseInt(e.target.value) || 0})}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="losses">敗北数</Label>
+                <Input
+                  id="losses"
+                  type="number"
+                  value={team?.losses || ''}
+                  onChange={(e) => setTeam({...team, losses: parseInt(e.target.value) || 0})}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>勝率</Label>
+                <div className="h-10 flex items-center justify-center bg-muted rounded-md font-bold">
+                  {team?.wins && team?.losses ? 
+                    ((team.wins / (team.wins + team.losses)) * 100).toFixed(1) + '%' : 
+                    '0%'
+                  }
+                </div>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label>勝率</Label>
-              <div className="h-10 flex items-center justify-center bg-muted rounded-md font-bold">
-                {team?.wins && team?.losses ? 
-                  ((team.wins / (team.wins + team.losses)) * 100).toFixed(1) + '%' : 
-                  '0%'
-                }
+
+            {/* Game History */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">過去の対戦カード ({selectedSeason}シーズン)</h3>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>日付</TableHead>
+                      <TableHead>対戦相手</TableHead>
+                      <TableHead>会場</TableHead>
+                      <TableHead>結果</TableHead>
+                      <TableHead>スコア</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredGameHistory.map((game) => (
+                      <TableRow key={game.id}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center space-x-1">
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                            <span>{game.date}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-semibold">{game.opponent}</div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={game.homeAway === 'home' ? 'default' : 'secondary'}>
+                            {game.homeAway === 'home' ? 'ホーム' : 'アウェイ'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={game.result === 'win' ? 'default' : 'destructive'}>
+                            {game.result === 'win' ? '勝利' : '敗北'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="font-mono">{game.score}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </div>
           </div>
@@ -360,10 +451,25 @@ export default function TeamEditPage({ params }: { params: { id: string } }) {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center space-x-2">
-              <Users className="h-5 w-5" />
-              <span>選手一覧</span>
-            </CardTitle>
+            <div className="flex items-center space-x-4">
+              <CardTitle className="flex items-center space-x-2">
+                <Users className="h-5 w-5" />
+                <span>選手一覧</span>
+              </CardTitle>
+              <div className="flex items-center space-x-2">
+                <Label htmlFor="playerSeason">シーズン</Label>
+                <Select value={selectedSeason} onValueChange={setSelectedSeason}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="2024">2024</SelectItem>
+                    <SelectItem value="2023">2023</SelectItem>
+                    <SelectItem value="2022">2022</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
               選手追加
@@ -371,59 +477,67 @@ export default function TeamEditPage({ params }: { params: { id: string } }) {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>選手</TableHead>
-                  <TableHead>背番号</TableHead>
-                  <TableHead>ポジション</TableHead>
-                  <TableHead>年齢</TableHead>
-                  <TableHead>身体情報</TableHead>
-                  <TableHead>ステータス</TableHead>
-                  <TableHead className="text-right">アクション</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {players.map((player) => (
-                  <TableRow key={player.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center space-x-3">
-                        <Avatar className="h-8 w-8">
-                          <AvatarFallback>
-                            {player.name.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-semibold">{player.name}</div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">#{player.jerseyNumber}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      {getPositionBadge(player.position)}
-                    </TableCell>
-                    <TableCell>{player.age}歳</TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <div>{player.height}</div>
-                        <div className="text-muted-foreground">{player.weight}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {getStatusBadge(player.status)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="sm">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
+          <div className="space-y-4">
+            <div className="text-sm text-muted-foreground">
+              {selectedSeason}シーズンの選手: {filteredPlayers.length}人
+            </div>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>選手</TableHead>
+                    <TableHead>背番号</TableHead>
+                    <TableHead>ポジション</TableHead>
+                    <TableHead>年齢</TableHead>
+                    <TableHead>身体情報</TableHead>
+                    <TableHead>ステータス</TableHead>
+                    <TableHead className="text-right">アクション</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredPlayers.map((player) => (
+                    <TableRow key={player.id}>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback>
+                              {player.name.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="font-semibold">{player.name}</div>
+                            <div className="text-xs text-muted-foreground">
+                              {player.season}シーズン
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">#{player.jerseyNumber}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        {getPositionBadge(player.position)}
+                      </TableCell>
+                      <TableCell>{player.age}歳</TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          <div>{player.height}</div>
+                          <div className="text-muted-foreground">{player.weight}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {getStatusBadge(player.status)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="sm">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         </CardContent>
       </Card>
