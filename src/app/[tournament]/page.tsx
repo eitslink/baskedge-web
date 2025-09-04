@@ -197,17 +197,15 @@ export default async function TournamentPublicPage({ params }: TournamentPagePro
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Tournament Info */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-8">
+            {/* Tournament Info & Status */}
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--primary-color)' }}>
                 <Trophy className="inline h-6 w-6 mr-2" />
-                大会情報
+                大会情報・状況
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-4">
                   <div>
                     <h3 className="font-semibold text-gray-900 flex items-center">
@@ -246,6 +244,27 @@ export default async function TournamentPublicPage({ params }: TournamentPagePro
                     </h3>
                     <p className="text-gray-600">{tournament.tournamentInfo.contactPhone}</p>
                     <p className="text-gray-600">{tournament.tournamentInfo.contactEmail}</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-semibold text-gray-900">現在のステータス</h3>
+                    <span 
+                      className="inline-block px-3 py-1 rounded-full text-sm font-medium text-white"
+                      style={{ backgroundColor: 'var(--secondary-color)' }}
+                    >
+                      {tournament.status === 'active' ? '開催中' : '準備中'}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">累計試合数</h3>
+                    <p className="text-gray-600">{tournament.tournamentInfo.totalGames}試合</p>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">大会形式</h3>
+                    <p className="text-gray-600">
+                      {tournament.type === 'league' ? 'リーグ戦' : 'トーナメント'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -478,139 +497,72 @@ export default async function TournamentPublicPage({ params }: TournamentPagePro
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Tournament Status */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--primary-color)' }}>
-                大会状況
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">ステータス</span>
-                  <span 
-                    className="px-2 py-1 rounded text-sm font-medium text-white"
-                    style={{ backgroundColor: 'var(--secondary-color)' }}
-                  >
-                    {tournament.status === 'active' ? '開催中' : '準備中'}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">累計試合数</span>
-                  <span className="font-semibold">{tournament.tournamentInfo.totalGames}試合</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">開催シーズン数</span>
-                  <span className="font-semibold">{tournament.tournamentInfo.totalSeasons}シーズン</span>
-                </div>
-              </div>
-            </div>
 
             {/* YouTube Channel */}
             <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--primary-color)' }}>
-                <Youtube className="inline h-5 w-5 mr-2" />
+              <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--primary-color)' }}>
+                <Youtube className="inline h-6 w-6 mr-2" />
                 YouTubeチャンネル
-              </h3>
+              </h2>
               <div className="text-center">
-                <div className="w-16 h-16 bg-red-100 rounded-full mx-auto mb-3 flex items-center justify-center">
-                  <Youtube className="h-8 w-8 text-red-600" />
+                <div className="w-20 h-20 bg-red-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <Youtube className="h-10 w-10 text-red-600" />
                 </div>
-                <p className="text-sm text-gray-600 mb-3">試合のハイライトやインタビューを配信中</p>
+                <p className="text-gray-600 mb-4">試合のハイライトやインタビューを配信中</p>
                 <a 
                   href={tournament.socialMedia.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center text-sm font-medium"
-                  style={{ color: 'var(--secondary-color)' }}
+                  className="inline-flex items-center px-6 py-3 rounded-lg font-medium text-white"
+                  style={{ backgroundColor: 'var(--primary-color)' }}
                 >
                   チャンネルを見る
-                  <ExternalLink className="h-3 w-3 ml-1" />
+                  <ExternalLink className="h-4 w-4 ml-2" />
                 </a>
               </div>
             </div>
 
             {/* Social Media */}
             <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--primary-color)' }}>
+              <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--primary-color)' }}>
                 公式SNS
-              </h3>
-              <div className="space-y-3">
+              </h2>
+              <div className="flex justify-center space-x-8">
                 <a 
                   href={tournament.socialMedia.twitter}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex flex-col items-center space-y-2 p-4 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  <Twitter className="h-5 w-5 text-blue-400" />
-                  <span className="text-sm">Twitter</span>
+                  <Twitter className="h-8 w-8 text-blue-400" />
+                  <span className="text-sm font-medium">Twitter</span>
                 </a>
                 <a 
                   href={tournament.socialMedia.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex flex-col items-center space-y-2 p-4 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  <Instagram className="h-5 w-5 text-pink-500" />
-                  <span className="text-sm">Instagram</span>
+                  <Instagram className="h-8 w-8 text-pink-500" />
+                  <span className="text-sm font-medium">Instagram</span>
                 </a>
                 <a 
                   href={tournament.socialMedia.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex flex-col items-center space-y-2 p-4 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  <Facebook className="h-5 w-5 text-blue-600" />
-                  <span className="text-sm">Facebook</span>
+                  <Facebook className="h-8 w-8 text-blue-600" />
+                  <span className="text-sm font-medium">Facebook</span>
                 </a>
               </div>
             </div>
-
-            {/* Quick Links */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--primary-color)' }}>
-                クイックリンク
-              </h3>
-              <div className="space-y-2">
-                <a 
-                  href="#standings" 
-                  className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  style={{ color: 'var(--secondary-color)' }}
-                >
-                  順位表を見る
-                </a>
-                <a 
-                  href="#schedule" 
-                  className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  style={{ color: 'var(--secondary-color)' }}
-                >
-                  試合スケジュール
-                </a>
-                <a 
-                  href="#teams" 
-                  className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  style={{ color: 'var(--secondary-color)' }}
-                >
-                  参加チーム一覧
-                </a>
-                <a 
-                  href="#registration" 
-                  className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  style={{ color: 'var(--secondary-color)' }}
-                >
-                  参加申し込み
-                </a>
-              </div>
-            </div>
-          </div>
         </div>
       </main>
 
       {/* Footer */}
       <footer className="bg-gray-50 border-t mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
             <p className="text-gray-600 mb-4">
               {tournament.publicPageSettings.footerText}
