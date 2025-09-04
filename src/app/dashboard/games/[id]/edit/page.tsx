@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { 
   ArrowLeft, 
   Save, 
@@ -59,6 +58,10 @@ export default function GameEditPage({ params }: { params: { id: string } }) {
   const [homeStats, setHomeStats] = useState<GameStats[]>([])
   const [awayStats, setAwayStats] = useState<GameStats[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [quarterScores, setQuarterScores] = useState({
+    home: { q1: 0, q2: 0, q3: 0, q4: 0, ot: 0 },
+    away: { q1: 0, q2: 0, q3: 0, q4: 0, ot: 0 }
+  })
 
   // ダミーデータ
   const mockGame = {
@@ -187,6 +190,25 @@ export default function GameEditPage({ params }: { params: { id: string } }) {
   const homeTotalStats = calculateTotalStats(homeStats)
   const awayTotalStats = calculateTotalStats(awayStats)
 
+  const calculateTotalScore = (scores: { q1: number, q2: number, q3: number, q4: number, ot: number }) => {
+    return scores.q1 + scores.q2 + scores.q3 + scores.q4 + scores.ot
+  }
+
+  const updateQuarterScore = (team: 'home' | 'away', quarter: 'q1' | 'q2' | 'q3' | 'q4' | 'ot', value: number) => {
+    setQuarterScores(prev => ({
+      ...prev,
+      [team]: {
+        ...prev[team],
+        [quarter]: value
+      }
+    }))
+  }
+
+  const homeTotalScore = calculateTotalScore(quarterScores.home)
+  const awayTotalScore = calculateTotalScore(quarterScores.away)
+  const winner = homeTotalScore > awayTotalScore ? game?.homeTeam : 
+                 awayTotalScore > homeTotalScore ? game?.awayTeam : '引き分け'
+
   const handleSave = () => {
     // ここで実際の保存処理を行う
     console.log('Saving game:', game)
@@ -269,14 +291,221 @@ export default function GameEditPage({ params }: { params: { id: string } }) {
         </CardContent>
       </Card>
 
-      {/* Score Sheet */}
-      <Tabs defaultValue="scoresheet" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="scoresheet">スコアシート</TabsTrigger>
-          <TabsTrigger value="summary">試合サマリー</TabsTrigger>
-        </TabsList>
+      {/* Game Summary */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Trophy className="h-5 w-5" />
+            <span>試合サマリー</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            {/* Quarter Scores */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">クォーター別得点</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h4 className="font-medium text-center">{game?.homeTeam}</h4>
+                  <div className="grid grid-cols-6 gap-2">
+                    <div className="text-center">
+                      <Label className="text-xs">1Q</Label>
+                      <Input
+                        type="number"
+                        value={quarterScores.home.q1}
+                        onChange={(e) => updateQuarterScore('home', 'q1', parseInt(e.target.value) || 0)}
+                        className="text-center"
+                      />
+                    </div>
+                    <div className="text-center">
+                      <Label className="text-xs">2Q</Label>
+                      <Input
+                        type="number"
+                        value={quarterScores.home.q2}
+                        onChange={(e) => updateQuarterScore('home', 'q2', parseInt(e.target.value) || 0)}
+                        className="text-center"
+                      />
+                    </div>
+                    <div className="text-center">
+                      <Label className="text-xs">3Q</Label>
+                      <Input
+                        type="number"
+                        value={quarterScores.home.q3}
+                        onChange={(e) => updateQuarterScore('home', 'q3', parseInt(e.target.value) || 0)}
+                        className="text-center"
+                      />
+                    </div>
+                    <div className="text-center">
+                      <Label className="text-xs">4Q</Label>
+                      <Input
+                        type="number"
+                        value={quarterScores.home.q4}
+                        onChange={(e) => updateQuarterScore('home', 'q4', parseInt(e.target.value) || 0)}
+                        className="text-center"
+                      />
+                    </div>
+                    <div className="text-center">
+                      <Label className="text-xs">OT</Label>
+                      <Input
+                        type="number"
+                        value={quarterScores.home.ot}
+                        onChange={(e) => updateQuarterScore('home', 'ot', parseInt(e.target.value) || 0)}
+                        className="text-center"
+                      />
+                    </div>
+                    <div className="text-center">
+                      <Label className="text-xs font-bold">合計</Label>
+                      <div className="h-10 flex items-center justify-center bg-muted rounded-md font-bold">
+                        {homeTotalScore}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="font-medium text-center">{game?.awayTeam}</h4>
+                  <div className="grid grid-cols-6 gap-2">
+                    <div className="text-center">
+                      <Label className="text-xs">1Q</Label>
+                      <Input
+                        type="number"
+                        value={quarterScores.away.q1}
+                        onChange={(e) => updateQuarterScore('away', 'q1', parseInt(e.target.value) || 0)}
+                        className="text-center"
+                      />
+                    </div>
+                    <div className="text-center">
+                      <Label className="text-xs">2Q</Label>
+                      <Input
+                        type="number"
+                        value={quarterScores.away.q2}
+                        onChange={(e) => updateQuarterScore('away', 'q2', parseInt(e.target.value) || 0)}
+                        className="text-center"
+                      />
+                    </div>
+                    <div className="text-center">
+                      <Label className="text-xs">3Q</Label>
+                      <Input
+                        type="number"
+                        value={quarterScores.away.q3}
+                        onChange={(e) => updateQuarterScore('away', 'q3', parseInt(e.target.value) || 0)}
+                        className="text-center"
+                      />
+                    </div>
+                    <div className="text-center">
+                      <Label className="text-xs">4Q</Label>
+                      <Input
+                        type="number"
+                        value={quarterScores.away.q4}
+                        onChange={(e) => updateQuarterScore('away', 'q4', parseInt(e.target.value) || 0)}
+                        className="text-center"
+                      />
+                    </div>
+                    <div className="text-center">
+                      <Label className="text-xs">OT</Label>
+                      <Input
+                        type="number"
+                        value={quarterScores.away.ot}
+                        onChange={(e) => updateQuarterScore('away', 'ot', parseInt(e.target.value) || 0)}
+                        className="text-center"
+                      />
+                    </div>
+                    <div className="text-center">
+                      <Label className="text-xs font-bold">合計</Label>
+                      <div className="h-10 flex items-center justify-center bg-muted rounded-md font-bold">
+                        {awayTotalScore}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-        <TabsContent value="scoresheet" className="space-y-4">
+            {/* Winner Display */}
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <h3 className="text-lg font-semibold mb-2">勝敗</h3>
+              <div className="text-2xl font-bold text-primary">
+                {winner}
+              </div>
+              <div className="text-sm text-muted-foreground mt-1">
+                {homeTotalScore} - {awayTotalScore}
+              </div>
+            </div>
+
+            {/* Team Stats Summary */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">{game?.homeTeam}</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span>得点:</span>
+                    <span className="font-bold">{homeTotalStats.points}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>リバウンド:</span>
+                    <span>{homeTotalStats.rebounds}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>アシスト:</span>
+                    <span>{homeTotalStats.assists}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>スティール:</span>
+                    <span>{homeTotalStats.steals}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>ブロック:</span>
+                    <span>{homeTotalStats.blocks}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>ターンオーバー:</span>
+                    <span>{homeTotalStats.turnovers}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>ファウル:</span>
+                    <span>{homeTotalStats.fouls}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">{game?.awayTeam}</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span>得点:</span>
+                    <span className="font-bold">{awayTotalStats.points}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>リバウンド:</span>
+                    <span>{awayTotalStats.rebounds}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>アシスト:</span>
+                    <span>{awayTotalStats.assists}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>スティール:</span>
+                    <span>{awayTotalStats.steals}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>ブロック:</span>
+                    <span>{awayTotalStats.blocks}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>ターンオーバー:</span>
+                    <span>{awayTotalStats.turnovers}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>ファウル:</span>
+                    <span>{awayTotalStats.fouls}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Score Sheet */}
+      <div className="space-y-4">
           {/* Home Team Stats */}
           <Card>
             <CardHeader>
@@ -612,89 +841,7 @@ export default function GameEditPage({ params }: { params: { id: string } }) {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="summary" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Trophy className="h-5 w-5" />
-                <span>試合サマリー</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">{game?.homeTeam}</h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span>得点:</span>
-                      <span className="font-bold">{homeTotalStats.points}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>リバウンド:</span>
-                      <span>{homeTotalStats.rebounds}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>アシスト:</span>
-                      <span>{homeTotalStats.assists}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>スティール:</span>
-                      <span>{homeTotalStats.steals}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>ブロック:</span>
-                      <span>{homeTotalStats.blocks}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>ターンオーバー:</span>
-                      <span>{homeTotalStats.turnovers}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>ファウル:</span>
-                      <span>{homeTotalStats.fouls}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">{game?.awayTeam}</h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span>得点:</span>
-                      <span className="font-bold">{awayTotalStats.points}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>リバウンド:</span>
-                      <span>{awayTotalStats.rebounds}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>アシスト:</span>
-                      <span>{awayTotalStats.assists}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>スティール:</span>
-                      <span>{awayTotalStats.steals}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>ブロック:</span>
-                      <span>{awayTotalStats.blocks}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>ターンオーバー:</span>
-                      <span>{awayTotalStats.turnovers}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>ファウル:</span>
-                      <span>{awayTotalStats.fouls}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      </div>
     </div>
   )
 }
