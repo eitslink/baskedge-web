@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { notFound } from 'next/navigation'
 import { Calendar, Clock, MapPin, Trophy, Target, BarChart3, MessageCircle, ExternalLink, Play, Share2, Bookmark } from 'lucide-react'
@@ -102,8 +104,22 @@ const getGameDetailData = async (permalink: string, season: string, gameId: stri
   return gameData
 }
 
-export default async function GameDetailPage({ params }: GameDetailPageProps) {
-  const data = await getGameDetailData(params.tournament, params.season, params.gameId)
+export default function GameDetailPage({ params }: GameDetailPageProps) {
+  const [data, setData] = React.useState<any>(null)
+  const [loading, setLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const result = await getGameDetailData(params.tournament, params.season, params.gameId)
+      setData(result)
+      setLoading(false)
+    }
+    fetchData()
+  }, [params.tournament, params.season, params.gameId])
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  }
 
   if (!data) {
     notFound()
@@ -273,7 +289,7 @@ export default async function GameDetailPage({ params }: GameDetailPageProps) {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {homeTeamStats.map((player, index) => (
+                    {homeTeamStats.map((player: any, index: number) => (
                       <tr key={index}>
                         <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">{player.number}</td>
                         <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{player.name}</td>
@@ -318,7 +334,7 @@ export default async function GameDetailPage({ params }: GameDetailPageProps) {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {awayTeamStats.map((player, index) => (
+                    {awayTeamStats.map((player: any, index: number) => (
                       <tr key={index}>
                         <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">{player.number}</td>
                         <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{player.name}</td>
@@ -406,7 +422,7 @@ export default async function GameDetailPage({ params }: GameDetailPageProps) {
               </p>
             </div>
             <div className="space-y-4">
-              {comments.map((comment) => (
+              {comments.map((comment: any) => (
                 <div key={comment.id} className="border-b pb-4">
                   <div className="flex items-center space-x-2 mb-2">
                     <span className="font-medium text-sm text-gray-900">{comment.author}</span>
@@ -435,7 +451,7 @@ export default async function GameDetailPage({ params }: GameDetailPageProps) {
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold mb-6 text-gray-900">協賛企業</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {sponsors.map((sponsor, index) => (
+              {sponsors.map((sponsor: any, index: number) => (
                 <div key={index} className="text-center">
                   <div className="w-24 h-24 bg-gray-200 rounded-lg mx-auto mb-3 flex items-center justify-center">
                     <span className="text-xs font-medium text-gray-600">{sponsor.name}</span>
@@ -451,20 +467,4 @@ export default async function GameDetailPage({ params }: GameDetailPageProps) {
   )
 }
 
-// メタデータ生成
-export async function generateMetadata({ params }: GameDetailPageProps) {
-  const data = await getGameDetailData(params.tournament, params.season, params.gameId)
-
-  if (!data) {
-    return {
-      title: '試合が見つかりません',
-    }
-  }
-
-  const { game, homeTeam, awayTeam } = data
-
-  return {
-    title: `${homeTeam.name} vs ${awayTeam.name} - ${game.date}`,
-    description: `${game.date} ${game.time}の${homeTeam.name} vs ${awayTeam.name}の試合詳細`,
-  }
-}
+// メタデータはクライアントコンポーネントでは使用できません

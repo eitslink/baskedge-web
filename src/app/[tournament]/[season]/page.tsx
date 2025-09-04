@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { notFound } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -159,8 +161,22 @@ const getTournamentSeasonData = async (permalink: string, season: string) => {
   return seasonData
 }
 
-export default async function SeasonPublicPage({ params }: SeasonPageProps) {
-  const data = await getTournamentSeasonData(params.tournament, params.season)
+export default function SeasonPublicPage({ params }: SeasonPageProps) {
+  const [data, setData] = React.useState<any>(null)
+  const [loading, setLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const result = await getTournamentSeasonData(params.tournament, params.season)
+      setData(result)
+      setLoading(false)
+    }
+    fetchData()
+  }, [params.tournament, params.season])
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  }
 
   if (!data || !data.tournament.isPublic) {
     notFound()
@@ -267,7 +283,7 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {standings.map((team, index) => (
+                      {standings.map((team: any, index: number) => (
                         <motion.tr 
                           key={team.team} 
                           className={index < 3 ? 'bg-yellow-50' : ''}
@@ -322,7 +338,7 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {playerStats.map((player, index) => (
+                      {playerStats.map((player: any, index: number) => (
                         <tr key={player.name} className={index < 3 ? 'bg-yellow-50' : ''}>
                           <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                             {player.position}
@@ -368,7 +384,7 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
               </h2>
               {gameResults.length > 0 ? (
                 <div className="space-y-4">
-                  {gameResults.map((game, index) => (
+                  {gameResults.map((game: any, index: number) => (
                     <motion.a 
                       key={index} 
                       href={`/${params.tournament}/${params.season}/games/game-${index + 1}`}
@@ -424,7 +440,7 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
               </h2>
               {upcomingGames.length > 0 ? (
                 <div className="space-y-4">
-                  {upcomingGames.map((game, index) => (
+                  {upcomingGames.map((game: any, index: number) => (
                     <div key={index} className="flex items-center justify-between p-4 border rounded-lg bg-blue-50">
                       <div className="flex items-center space-x-4">
                         <span className="text-sm text-gray-500">{game.date}</span>
@@ -462,7 +478,7 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
                   3ポイント
                 </h3>
                 <div className="space-y-3">
-                  {threePointLeaders.map((player, index) => (
+                  {threePointLeaders.map((player: any, index: number) => (
                     <div key={player.name} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex items-center space-x-3">
                         <span className="text-sm font-medium text-gray-500">#{player.position}</span>
@@ -486,7 +502,7 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
                   フィールドゴール
                 </h3>
                 <div className="space-y-3">
-                  {fgLeaders.map((player, index) => (
+                  {fgLeaders.map((player: any, index: number) => (
                     <div key={player.name} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex items-center space-x-3">
                         <span className="text-sm font-medium text-gray-500">#{player.position}</span>
@@ -510,7 +526,7 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
                   フリースロー
                 </h3>
                 <div className="space-y-3">
-                  {ftLeaders.map((player, index) => (
+                  {ftLeaders.map((player: any, index: number) => (
                     <div key={player.name} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex items-center space-x-3">
                         <span className="text-sm font-medium text-gray-500">#{player.position}</span>
@@ -538,7 +554,7 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
             </h2>
             {sponsors.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-                {sponsors.map((sponsor, index) => (
+                {sponsors.map((sponsor: any, index: number) => (
                   <div key={index} className="text-center p-4 border rounded-lg hover:bg-gray-50 transition-colors">
                     <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-3 flex items-center justify-center">
                       <span className="text-xs font-medium text-gray-600">{sponsor.name.charAt(0)}</span>
@@ -579,18 +595,4 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
   )
 }
 
-// メタデータ生成
-export async function generateMetadata({ params }: SeasonPageProps) {
-  const data = await getTournamentSeasonData(params.tournament, params.season)
-
-  if (!data || !data.tournament.isPublic) {
-    return {
-      title: 'シーズンが見つかりません',
-    }
-  }
-
-  return {
-    title: `${data.season.name} - ${data.tournament.name}`,
-    description: `${data.season.name}の${data.tournament.description}`,
-  }
-}
+// メタデータはクライアントコンポーネントでは使用できません

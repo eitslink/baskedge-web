@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { notFound } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -152,8 +154,22 @@ const getTournamentData = async (permalink: string) => {
   return mockTournaments[permalink as keyof typeof mockTournaments] || null
 }
 
-export default async function TournamentPublicPage({ params }: TournamentPageProps) {
-  const tournament = await getTournamentData(params.tournament)
+export default function TournamentPublicPage({ params }: TournamentPageProps) {
+  const [tournament, setTournament] = React.useState<any>(null)
+  const [loading, setLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const data = await getTournamentData(params.tournament)
+      setTournament(data)
+      setLoading(false)
+    }
+    fetchData()
+  }, [params.tournament])
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  }
 
   if (!tournament || !tournament.isPublic) {
     notFound()
@@ -656,18 +672,4 @@ export default async function TournamentPublicPage({ params }: TournamentPagePro
   )
 }
 
-// メタデータ生成
-export async function generateMetadata({ params }: TournamentPageProps) {
-  const tournament = await getTournamentData(params.tournament)
-
-  if (!tournament || !tournament.isPublic) {
-    return {
-      title: '大会が見つかりません',
-    }
-  }
-
-  return {
-    title: tournament.name,
-    description: tournament.description,
-  }
-}
+// メタデータはクライアントコンポーネントでは使用できません
