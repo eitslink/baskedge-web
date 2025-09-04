@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { 
   ArrowLeft, 
@@ -22,8 +23,36 @@ import {
   Mail,
   Users,
   Trophy,
-  Award
+  Award,
+  History,
+  BarChart3,
+  Clock
 } from 'lucide-react'
+
+interface TeamHistory {
+  id: number
+  team: string
+  startDate: string
+  endDate: string | null
+  jerseyNumber: number
+  position: string
+  isCurrent: boolean
+}
+
+interface SeasonStats {
+  season: string
+  team: string
+  gamesPlayed: number
+  points: number
+  rebounds: number
+  assists: number
+  steals: number
+  blocks: number
+  fieldGoalPercentage: number
+  threePointPercentage: number
+  freeThrowPercentage: number
+  minutesPerGame: number
+}
 
 interface Player {
   id: number
@@ -52,6 +81,8 @@ interface Player {
   phone: string
   bio: string
   achievements: string[]
+  teamHistory: TeamHistory[]
+  seasonStats: SeasonStats[]
 }
 
 export default function PlayerEditPage() {
@@ -84,7 +115,94 @@ export default function PlayerEditPage() {
     email: 'tanaka@example.com',
     phone: '090-1234-5678',
     bio: 'バスケットボールに情熱を注ぐ選手。チームのエースとして活躍し、常に勝利を目指している。',
-    achievements: ['NBA新人王', 'オールスター選出', 'シーズンMVP候補']
+    achievements: ['NBA新人王', 'オールスター選出', 'シーズンMVP候補'],
+    teamHistory: [
+      {
+        id: 1,
+        team: 'レイカーズ',
+        startDate: '2020-10-01',
+        endDate: null,
+        jerseyNumber: 23,
+        position: 'SF',
+        isCurrent: true
+      },
+      {
+        id: 2,
+        team: 'ウォリアーズ',
+        startDate: '2018-10-01',
+        endDate: '2020-09-30',
+        jerseyNumber: 30,
+        position: 'SF',
+        isCurrent: false
+      },
+      {
+        id: 3,
+        team: 'セルティックス',
+        startDate: '2016-10-01',
+        endDate: '2018-09-30',
+        jerseyNumber: 7,
+        position: 'SF',
+        isCurrent: false
+      }
+    ],
+    seasonStats: [
+      {
+        season: '2023-24',
+        team: 'レイカーズ',
+        gamesPlayed: 65,
+        points: 28.5,
+        rebounds: 8.2,
+        assists: 6.8,
+        steals: 1.2,
+        blocks: 0.8,
+        fieldGoalPercentage: 52.3,
+        threePointPercentage: 38.7,
+        freeThrowPercentage: 85.2,
+        minutesPerGame: 35.2
+      },
+      {
+        season: '2022-23',
+        team: 'レイカーズ',
+        gamesPlayed: 58,
+        points: 26.8,
+        rebounds: 7.9,
+        assists: 6.2,
+        steals: 1.1,
+        blocks: 0.7,
+        fieldGoalPercentage: 50.8,
+        threePointPercentage: 36.4,
+        freeThrowPercentage: 83.1,
+        minutesPerGame: 34.1
+      },
+      {
+        season: '2021-22',
+        team: 'ウォリアーズ',
+        gamesPlayed: 72,
+        points: 24.3,
+        rebounds: 6.8,
+        assists: 5.9,
+        steals: 1.0,
+        blocks: 0.6,
+        fieldGoalPercentage: 49.2,
+        threePointPercentage: 35.8,
+        freeThrowPercentage: 81.5,
+        minutesPerGame: 32.8
+      },
+      {
+        season: '2020-21',
+        team: 'ウォリアーズ',
+        gamesPlayed: 68,
+        points: 22.1,
+        rebounds: 6.2,
+        assists: 5.4,
+        steals: 0.9,
+        blocks: 0.5,
+        fieldGoalPercentage: 47.8,
+        threePointPercentage: 34.2,
+        freeThrowPercentage: 79.8,
+        minutesPerGame: 31.5
+      }
+    ]
   })
 
   const getStatusBadge = (status: string) => {
@@ -471,6 +589,155 @@ export default function PlayerEditPage() {
                   placeholder="選手のプロフィールを入力してください..."
                   className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Team History */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <History className="h-5 w-5" />
+                <span>チーム移籍履歴</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>チーム</TableHead>
+                        <TableHead>背番号</TableHead>
+                        <TableHead>ポジション</TableHead>
+                        <TableHead>在籍期間</TableHead>
+                        <TableHead>ステータス</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {player.teamHistory.map((history) => (
+                        <TableRow key={history.id}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center space-x-2">
+                              <Users className="h-4 w-4 text-muted-foreground" />
+                              <span>{history.team}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">#{history.jerseyNumber}</Badge>
+                          </TableCell>
+                          <TableCell>
+                            {getPositionBadge(history.position)}
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-sm">
+                              <div>{history.startDate}</div>
+                              <div className="text-muted-foreground">
+                                {history.endDate ? `〜 ${history.endDate}` : '〜 現在'}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {history.isCurrent ? (
+                              <Badge variant="default">現在</Badge>
+                            ) : (
+                              <Badge variant="secondary">過去</Badge>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                <Button variant="outline" size="sm">
+                  移籍履歴を追加
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Past Season Stats */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <BarChart3 className="h-5 w-5" />
+                <span>過去シーズン成績</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>シーズン</TableHead>
+                        <TableHead>チーム</TableHead>
+                        <TableHead>出場</TableHead>
+                        <TableHead>得点</TableHead>
+                        <TableHead>リバウンド</TableHead>
+                        <TableHead>アシスト</TableHead>
+                        <TableHead>FG%</TableHead>
+                        <TableHead>3P%</TableHead>
+                        <TableHead>FT%</TableHead>
+                        <TableHead>出場時間</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {player.seasonStats.map((stats, index) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">
+                            {stats.season}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-1">
+                              <Users className="h-3 w-3 text-muted-foreground" />
+                              <span className="text-sm">{stats.team}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{stats.gamesPlayed}試合</Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-1">
+                              <Target className="h-3 w-3 text-muted-foreground" />
+                              <span className="font-medium">{stats.points}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-1">
+                              <TrendingUp className="h-3 w-3 text-muted-foreground" />
+                              <span className="font-medium">{stats.rebounds}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-1">
+                              <User className="h-3 w-3 text-muted-foreground" />
+                              <span className="font-medium">{stats.assists}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm">{stats.fieldGoalPercentage}%</span>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm">{stats.threePointPercentage}%</span>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm">{stats.freeThrowPercentage}%</span>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-1">
+                              <Clock className="h-3 w-3 text-muted-foreground" />
+                              <span className="text-sm">{stats.minutesPerGame}分</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                <Button variant="outline" size="sm">
+                  成績を追加
+                </Button>
               </div>
             </CardContent>
           </Card>
