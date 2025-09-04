@@ -12,9 +12,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { 
   Settings,
   Trophy,
-  Calendar,
-  Palette,
-  Users,
   Crown,
   Plus,
   Edit,
@@ -40,34 +37,6 @@ interface Tournament {
   createdAt: string
 }
 
-interface LeagueSettings {
-  regularSeason: {
-    enabled: boolean
-    gamesPerTeam: number
-    playoffTeams: number
-  }
-  playoffs: {
-    enabled: boolean
-    format: 'single-elimination' | 'double-elimination' | 'best-of-series'
-    seriesLength: number
-  }
-  standings: {
-    sortBy: 'wins' | 'winPercentage' | 'points'
-    tiebreaker: 'headToHead' | 'pointDifferential' | 'pointsFor'
-  }
-}
-
-interface PublicPageSettings {
-  primaryColor: string
-  secondaryColor: string
-  accentColor: string
-  fontFamily: string
-  logo: string | null
-  favicon: string | null
-  customCSS: string
-  headerText: string
-  footerText: string
-}
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('tournaments')
@@ -104,34 +73,6 @@ export default function SettingsPage() {
     }
   ])
 
-  const [leagueSettings, setLeagueSettings] = useState<LeagueSettings>({
-    regularSeason: {
-      enabled: true,
-      gamesPerTeam: 20,
-      playoffTeams: 8
-    },
-    playoffs: {
-      enabled: true,
-      format: 'single-elimination',
-      seriesLength: 1
-    },
-    standings: {
-      sortBy: 'winPercentage',
-      tiebreaker: 'headToHead'
-    }
-  })
-
-  const [publicPageSettings, setPublicPageSettings] = useState<PublicPageSettings>({
-    primaryColor: '#1e40af',
-    secondaryColor: '#3b82f6',
-    accentColor: '#f59e0b',
-    fontFamily: 'Inter',
-    logo: null,
-    favicon: null,
-    customCSS: '',
-    headerText: 'BaskEdge - バスケットボール特化スポーツ運営システム',
-    footerText: '© 2024 BaskEdge. All rights reserved.'
-  })
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -191,18 +132,10 @@ export default function SettingsPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4 mb-6">
+        <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="tournaments" className="flex items-center space-x-2">
             <Trophy className="h-4 w-4" />
             <span>大会管理</span>
-          </TabsTrigger>
-          <TabsTrigger value="league-settings" className="flex items-center space-x-2">
-            <Users className="h-4 w-4" />
-            <span>リーグ設定</span>
-          </TabsTrigger>
-          <TabsTrigger value="public-page" className="flex items-center space-x-2">
-            <Palette className="h-4 w-4" />
-            <span>公開ページ</span>
           </TabsTrigger>
           <TabsTrigger value="system" className="flex items-center space-x-2">
             <Settings className="h-4 w-4" />
@@ -270,7 +203,11 @@ export default function SettingsPage() {
                     </div>
 
                     <div className="flex items-center space-x-2">
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => window.location.href = `/dashboard/settings/tournaments/${tournament.id}/edit`}
+                      >
                         <Edit className="mr-2 h-4 w-4" />
                         編集
                       </Button>
@@ -290,341 +227,6 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
 
-        {/* League Settings Tab */}
-        <TabsContent value="league-settings" className="mt-6 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Users className="h-5 w-5" />
-                <span>リーグ戦設定</span>
-              </CardTitle>
-              <CardDescription>
-                リーグ戦の形式とルールを設定できます
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Regular Season Settings */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">レギュラーシーズン</h3>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="regularSeasonEnabled">レギュラーシーズンを有効にする</Label>
-                    <p className="text-sm text-muted-foreground">
-                      リーグ戦形式でレギュラーシーズンを実施する
-                    </p>
-                  </div>
-                  <Switch
-                    id="regularSeasonEnabled"
-                    checked={leagueSettings.regularSeason.enabled}
-                    onCheckedChange={(checked) => setLeagueSettings({
-                      ...leagueSettings,
-                      regularSeason: {...leagueSettings.regularSeason, enabled: checked}
-                    })}
-                  />
-                </div>
-
-                {leagueSettings.regularSeason.enabled && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="gamesPerTeam">各チームの試合数</Label>
-                      <Input
-                        id="gamesPerTeam"
-                        type="number"
-                        value={leagueSettings.regularSeason.gamesPerTeam}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLeagueSettings({
-                          ...leagueSettings,
-                          regularSeason: {...leagueSettings.regularSeason, gamesPerTeam: parseInt(e.target.value) || 0}
-                        })}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="playoffTeams">プレーオフ進出チーム数</Label>
-                      <Input
-                        id="playoffTeams"
-                        type="number"
-                        value={leagueSettings.regularSeason.playoffTeams}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLeagueSettings({
-                          ...leagueSettings,
-                          regularSeason: {...leagueSettings.regularSeason, playoffTeams: parseInt(e.target.value) || 0}
-                        })}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Playoffs Settings */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">プレーオフ</h3>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="playoffsEnabled">プレーオフを有効にする</Label>
-                    <p className="text-sm text-muted-foreground">
-                      レギュラーシーズン後にプレーオフを実施する
-                    </p>
-                  </div>
-                  <Switch
-                    id="playoffsEnabled"
-                    checked={leagueSettings.playoffs.enabled}
-                    onCheckedChange={(checked) => setLeagueSettings({
-                      ...leagueSettings,
-                      playoffs: {...leagueSettings.playoffs, enabled: checked}
-                    })}
-                  />
-                </div>
-
-                {leagueSettings.playoffs.enabled && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="playoffFormat">プレーオフ形式</Label>
-                      <Select 
-                        value={leagueSettings.playoffs.format} 
-                        onValueChange={(value: 'single-elimination' | 'double-elimination' | 'best-of-series') => setLeagueSettings({
-                          ...leagueSettings,
-                          playoffs: {...leagueSettings.playoffs, format: value}
-                        })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="single-elimination">シングルエリミネーション</SelectItem>
-                          <SelectItem value="double-elimination">ダブルエリミネーション</SelectItem>
-                          <SelectItem value="best-of-series">ベストオブシリーズ</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="seriesLength">シリーズ長</Label>
-                      <Input
-                        id="seriesLength"
-                        type="number"
-                        value={leagueSettings.playoffs.seriesLength}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLeagueSettings({
-                          ...leagueSettings,
-                          playoffs: {...leagueSettings.playoffs, seriesLength: parseInt(e.target.value) || 1}
-                        })}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Standings Settings */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">順位決定</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="sortBy">順位の基準</Label>
-                    <Select 
-                      value={leagueSettings.standings.sortBy} 
-                      onValueChange={(value: 'wins' | 'winPercentage' | 'points') => setLeagueSettings({
-                        ...leagueSettings,
-                        standings: {...leagueSettings.standings, sortBy: value}
-                      })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="wins">勝利数</SelectItem>
-                        <SelectItem value="winPercentage">勝率</SelectItem>
-                        <SelectItem value="points">ポイント</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="tiebreaker">タイブレーカー</Label>
-                    <Select 
-                      value={leagueSettings.standings.tiebreaker} 
-                      onValueChange={(value: 'headToHead' | 'pointDifferential' | 'pointsFor') => setLeagueSettings({
-                        ...leagueSettings,
-                        standings: {...leagueSettings.standings, tiebreaker: value}
-                      })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="headToHead">直接対戦</SelectItem>
-                        <SelectItem value="pointDifferential">得失点差</SelectItem>
-                        <SelectItem value="pointsFor">総得点</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Public Page Settings Tab */}
-        <TabsContent value="public-page" className="mt-6 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Palette className="h-5 w-5" />
-                <span>公開ページ設定</span>
-              </CardTitle>
-              <CardDescription>
-                公開ページのデザインとスタイルをカスタマイズできます
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Color Settings */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">カラーテーマ</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="primaryColor">プライマリカラー</Label>
-                    <div className="flex items-center space-x-2">
-                      <Input
-                        id="primaryColor"
-                        type="color"
-                        value={publicPageSettings.primaryColor}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPublicPageSettings({
-                          ...publicPageSettings,
-                          primaryColor: e.target.value
-                        })}
-                        className="w-16 h-10"
-                      />
-                      <Input
-                        value={publicPageSettings.primaryColor}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPublicPageSettings({
-                          ...publicPageSettings,
-                          primaryColor: e.target.value
-                        })}
-                        className="flex-1"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="secondaryColor">セカンダリカラー</Label>
-                    <div className="flex items-center space-x-2">
-                      <Input
-                        id="secondaryColor"
-                        type="color"
-                        value={publicPageSettings.secondaryColor}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPublicPageSettings({
-                          ...publicPageSettings,
-                          secondaryColor: e.target.value
-                        })}
-                        className="w-16 h-10"
-                      />
-                      <Input
-                        value={publicPageSettings.secondaryColor}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPublicPageSettings({
-                          ...publicPageSettings,
-                          secondaryColor: e.target.value
-                        })}
-                        className="flex-1"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="accentColor">アクセントカラー</Label>
-                    <div className="flex items-center space-x-2">
-                      <Input
-                        id="accentColor"
-                        type="color"
-                        value={publicPageSettings.accentColor}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPublicPageSettings({
-                          ...publicPageSettings,
-                          accentColor: e.target.value
-                        })}
-                        className="w-16 h-10"
-                      />
-                      <Input
-                        value={publicPageSettings.accentColor}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPublicPageSettings({
-                          ...publicPageSettings,
-                          accentColor: e.target.value
-                        })}
-                        className="flex-1"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Typography Settings */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">タイポグラフィ</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="fontFamily">フォントファミリー</Label>
-                    <Select 
-                      value={publicPageSettings.fontFamily} 
-                      onValueChange={(value) => setPublicPageSettings({
-                        ...publicPageSettings,
-                        fontFamily: value
-                      })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Inter">Inter</SelectItem>
-                        <SelectItem value="Noto Sans JP">Noto Sans JP</SelectItem>
-                        <SelectItem value="Roboto">Roboto</SelectItem>
-                        <SelectItem value="Open Sans">Open Sans</SelectItem>
-                        <SelectItem value="Lato">Lato</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-
-              {/* Content Settings */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">コンテンツ</h3>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="headerText">ヘッダーテキスト</Label>
-                    <Input
-                      id="headerText"
-                      value={publicPageSettings.headerText}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPublicPageSettings({
-                        ...publicPageSettings,
-                        headerText: e.target.value
-                      })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="footerText">フッターテキスト</Label>
-                    <Input
-                      id="footerText"
-                      value={publicPageSettings.footerText}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPublicPageSettings({
-                        ...publicPageSettings,
-                        footerText: e.target.value
-                      })}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Custom CSS */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">カスタムCSS</h3>
-                <div className="space-y-2">
-                  <Label htmlFor="customCSS">カスタムスタイルシート</Label>
-                  <textarea
-                    id="customCSS"
-                    value={publicPageSettings.customCSS}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setPublicPageSettings({
-                      ...publicPageSettings,
-                      customCSS: e.target.value
-                    })}
-                    rows={8}
-                    placeholder="/* カスタムCSSをここに入力してください */"
-                    className="flex min-h-[200px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 font-mono"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         {/* System Settings Tab */}
         <TabsContent value="system" className="mt-6 space-y-6">
