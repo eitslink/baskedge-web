@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { Trophy, Target, Users, Calendar, Award, TrendingUp, Star, ExternalLink } from 'lucide-react'
 
 interface SeasonPageProps {
@@ -184,36 +185,66 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+          <motion.div 
+            className="flex justify-between items-center py-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
             <div>
-              <h1 className="text-3xl font-bold" style={{ color: 'var(--primary-color)' }}>
+              <motion.h1 
+                className="text-3xl font-bold" 
+                style={{ color: 'var(--primary-color)' }}
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
                 {tournament.publicPageSettings.headerText}
-              </h1>
-              <p className="mt-2 text-lg text-gray-600">
+              </motion.h1>
+              <motion.p 
+                className="mt-2 text-lg text-gray-600"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
                 {season.name} - {tournament.description}
-              </p>
+              </motion.p>
             </div>
-            <div className="flex items-center space-x-4">
-              <div 
+            <motion.div 
+              className="flex items-center space-x-4"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <motion.div 
                 className="px-4 py-2 rounded-full text-sm font-medium text-white"
                 style={{ backgroundColor: 'var(--accent-color)' }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 {season.name}
-              </div>
-              <div 
+              </motion.div>
+              <motion.div 
                 className="px-4 py-2 rounded-full text-sm font-medium text-white"
                 style={{ backgroundColor: 'var(--secondary-color)' }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 {tournament.type === 'league' ? 'リーグ戦' : 'トーナメント'}
-              </div>
-            </div>
-          </div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-8">
+        <motion.div 
+          className="space-y-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
           {/* Standings and Player Stats - 2列表示 */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Standings */}
@@ -236,7 +267,12 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {standings.map((team, index) => (
-                        <tr key={team.team} className={index < 3 ? 'bg-yellow-50' : ''}>
+                        <motion.tr 
+                          key={team.team} 
+                          className={index < 3 ? 'bg-yellow-50' : ''}
+                          whileHover={{ scale: 1.02, backgroundColor: '#f8fafc' }}
+                          transition={{ duration: 0.2 }}
+                        >
                           <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                             {team.position}
                           </td>
@@ -252,7 +288,7 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
                           <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                             {(team.winPercentage * 100).toFixed(1)}%
                           </td>
-                        </tr>
+                        </motion.tr>
                       ))}
                     </tbody>
                   </table>
@@ -332,10 +368,13 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
               {gameResults.length > 0 ? (
                 <div className="space-y-4">
                   {gameResults.map((game, index) => (
-                    <a 
+                    <motion.a 
                       key={index} 
                       href={`/${params.tournament}/${params.season}/games/game-${index + 1}`}
                       className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                      whileHover={{ scale: 1.02, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}
+                      whileTap={{ scale: 0.98 }}
+                      transition={{ duration: 0.2 }}
                     >
                       <div className="flex items-center space-x-4">
                         <span className="text-sm text-gray-500">{game.date}</span>
@@ -366,7 +405,7 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
                           {game.awayScore}
                         </span>
                       </div>
-                    </a>
+                    </motion.a>
                   ))}
                 </div>
               ) : (
@@ -524,7 +563,7 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       </main>
 
       {/* Footer */}

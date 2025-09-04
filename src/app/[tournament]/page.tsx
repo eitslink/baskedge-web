@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { 
   Calendar, 
   Users, 
@@ -175,32 +176,66 @@ export default async function TournamentPublicPage({ params }: TournamentPagePro
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+          <motion.div 
+            className="flex justify-between items-center py-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
             <div>
-              <h1 className="text-4xl font-bold" style={{ color: 'var(--primary-color)' }}>
+              <motion.h1 
+                className="text-4xl font-bold" 
+                style={{ color: 'var(--primary-color)' }}
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
                 {tournament.publicPageSettings.headerText}
-              </h1>
-              <p className="mt-2 text-lg text-gray-600">
+              </motion.h1>
+              <motion.p 
+                className="mt-2 text-lg text-gray-600"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
                 {tournament.description}
-              </p>
+              </motion.p>
             </div>
-            <div className="flex items-center space-x-4">
-              <div 
+            <motion.div 
+              className="flex items-center space-x-4"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <motion.div 
                 className="px-4 py-2 rounded-full text-sm font-medium text-white"
                 style={{ backgroundColor: 'var(--accent-color)' }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 {tournament.type === 'league' ? 'リーグ戦' : 'トーナメント'}
-              </div>
-            </div>
-          </div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-8">
+        <motion.div 
+          className="space-y-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
             {/* Tournament Info & Status */}
-            <div className="bg-white rounded-lg shadow p-6">
+            <motion.div 
+              className="bg-white rounded-lg shadow p-6"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
               <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--primary-color)' }}>
                 <Trophy className="inline h-6 w-6 mr-2" />
                 大会情報・状況
@@ -268,10 +303,16 @@ export default async function TournamentPublicPage({ params }: TournamentPagePro
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Tournament Regulations */}
-            <div className="bg-white rounded-lg shadow p-6">
+            <motion.div 
+              className="bg-white rounded-lg shadow p-6"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
+            >
               <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--primary-color)' }}>
                 <FileText className="inline h-6 w-6 mr-2" />
                 大会要項・規約
@@ -557,7 +598,7 @@ export default async function TournamentPublicPage({ params }: TournamentPagePro
                 </a>
               </div>
             </div>
-        </div>
+        </motion.div>
       </main>
 
       {/* Footer */}
