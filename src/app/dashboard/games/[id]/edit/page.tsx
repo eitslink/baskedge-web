@@ -431,75 +431,6 @@ export default function GameEditPage({ params }: { params: { id: string } }) {
               </div>
             </div>
 
-            {/* Team Stats Summary */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">{game?.homeTeam}</h3>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span>得点:</span>
-                    <span className="font-bold">{homeTotalStats.points}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>リバウンド:</span>
-                    <span>{homeTotalStats.rebounds}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>アシスト:</span>
-                    <span>{homeTotalStats.assists}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>スティール:</span>
-                    <span>{homeTotalStats.steals}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>ブロック:</span>
-                    <span>{homeTotalStats.blocks}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>ターンオーバー:</span>
-                    <span>{homeTotalStats.turnovers}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>ファウル:</span>
-                    <span>{homeTotalStats.fouls}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">{game?.awayTeam}</h3>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span>得点:</span>
-                    <span className="font-bold">{awayTotalStats.points}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>リバウンド:</span>
-                    <span>{awayTotalStats.rebounds}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>アシスト:</span>
-                    <span>{awayTotalStats.assists}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>スティール:</span>
-                    <span>{awayTotalStats.steals}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>ブロック:</span>
-                    <span>{awayTotalStats.blocks}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>ターンオーバー:</span>
-                    <span>{awayTotalStats.turnovers}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>ファウル:</span>
-                    <span>{awayTotalStats.fouls}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </CardContent>
       </Card>
@@ -668,6 +599,65 @@ export default function GameEditPage({ params }: { params: { id: string } }) {
                         </TableCell>
                       </TableRow>
                     ))}
+                    {/* Total Row */}
+                    <TableRow className="bg-muted font-bold">
+                      <TableCell className="font-bold">合計</TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {homeStats.reduce((sum, player) => sum + player.minutes, 0)}分
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold text-primary">
+                          {homeTotalStats.points}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {homeTotalStats.rebounds}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {homeTotalStats.assists}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {homeTotalStats.steals}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {homeTotalStats.blocks}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {homeTotalStats.turnovers}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {homeTotalStats.fouls}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {homeTotalStats.fieldGoalsMade}/{homeTotalStats.fieldGoalsAttempted}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {homeTotalStats.threePointersMade}/{homeTotalStats.threePointersAttempted}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {homeTotalStats.freeThrowsMade}/{homeTotalStats.freeThrowsAttempted}
+                        </div>
+                      </TableCell>
+                    </TableRow>
                   </TableBody>
                 </Table>
               </div>
@@ -836,6 +826,65 @@ export default function GameEditPage({ params }: { params: { id: string } }) {
                         </TableCell>
                       </TableRow>
                     ))}
+                    {/* Total Row */}
+                    <TableRow className="bg-muted font-bold">
+                      <TableCell className="font-bold">合計</TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {awayStats.reduce((sum, player) => sum + player.minutes, 0)}分
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold text-primary">
+                          {awayTotalStats.points}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {awayTotalStats.rebounds}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {awayTotalStats.assists}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {awayTotalStats.steals}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {awayTotalStats.blocks}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {awayTotalStats.turnovers}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {awayTotalStats.fouls}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {awayTotalStats.fieldGoalsMade}/{awayTotalStats.fieldGoalsAttempted}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {awayTotalStats.threePointersMade}/{awayTotalStats.threePointersAttempted}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-bold">
+                          {awayTotalStats.freeThrowsMade}/{awayTotalStats.freeThrowsAttempted}
+                        </div>
+                      </TableCell>
+                    </TableRow>
                   </TableBody>
                 </Table>
               </div>
