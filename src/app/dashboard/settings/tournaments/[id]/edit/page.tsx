@@ -83,6 +83,7 @@ interface Season {
   description: string
   permalink: string
   isPublic: boolean
+  isCurrent: boolean
   createdAt: string
 }
 
@@ -160,6 +161,7 @@ export default function TournamentEditPage({ params }: { params: { id: string } 
       description: '2024年春季シーズンです。',
       permalink: '2024-spring',
       isPublic: true,
+      isCurrent: true,
       createdAt: '2024-02-01'
     },
     {
@@ -172,6 +174,7 @@ export default function TournamentEditPage({ params }: { params: { id: string } 
       description: '2024年夏季シーズンです。',
       permalink: '2024-summer',
       isPublic: false,
+      isCurrent: false,
       createdAt: '2024-05-01'
     },
     {
@@ -184,6 +187,7 @@ export default function TournamentEditPage({ params }: { params: { id: string } 
       description: '2025年春季シーズンです。',
       permalink: '2025-spring',
       isPublic: false,
+      isCurrent: false,
       createdAt: '2024-12-01'
     }
   ])
@@ -196,7 +200,8 @@ export default function TournamentEditPage({ params }: { params: { id: string } 
     status: 'draft',
     description: '',
     permalink: '',
-    isPublic: false
+    isPublic: false,
+    isCurrent: false
   })
 
   const getStatusBadge = (status: string) => {
@@ -488,6 +493,11 @@ export default function TournamentEditPage({ params }: { params: { id: string } 
                         <Badge variant={season.isPublic ? "default" : "secondary"}>
                           {season.isPublic ? "公開" : "非公開"}
                         </Badge>
+                        {season.isCurrent && (
+                          <Badge className="bg-yellow-100 text-yellow-800">
+                            現在のシーズン
+                          </Badge>
+                        )}
                       </div>
                     </div>
                     
@@ -513,11 +523,19 @@ export default function TournamentEditPage({ params }: { params: { id: string } 
                     </div>
 
                     <div className="flex items-center space-x-2">
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => window.location.href = `/dashboard/settings/tournaments/${params.id}/seasons/${season.id}/edit`}
+                      >
                         <Edit className="mr-2 h-4 w-4" />
                         編集
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => window.open(`/${publicPageSettings.permalink || 'xxxleague'}/${season.permalink}`, '_blank')}
+                      >
                         <Link className="mr-2 h-4 w-4" />
                         公開ページ
                       </Button>
@@ -648,21 +666,40 @@ export default function TournamentEditPage({ params }: { params: { id: string } 
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <Label htmlFor="newSeasonIsPublic">公開設定</Label>
-                        <p className="text-sm text-muted-foreground">
-                          このシーズンを公開ページで表示する
-                        </p>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="newSeasonIsPublic">公開設定</Label>
+                          <p className="text-sm text-muted-foreground">
+                            このシーズンを公開ページで表示する
+                          </p>
+                        </div>
+                        <Switch
+                          id="newSeasonIsPublic"
+                          checked={newSeason.isPublic || false}
+                          onCheckedChange={(checked) => setNewSeason({
+                            ...newSeason,
+                            isPublic: checked
+                          })}
+                        />
                       </div>
-                      <Switch
-                        id="newSeasonIsPublic"
-                        checked={newSeason.isPublic || false}
-                        onCheckedChange={(checked) => setNewSeason({
-                          ...newSeason,
-                          isPublic: checked
-                        })}
-                      />
+
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="newSeasonIsCurrent">現在のシーズン</Label>
+                          <p className="text-sm text-muted-foreground">
+                            このシーズンを現在のシーズンとして設定する（ゲーム・チーム登録時に自動選択される）
+                          </p>
+                        </div>
+                        <Switch
+                          id="newSeasonIsCurrent"
+                          checked={newSeason.isCurrent || false}
+                          onCheckedChange={(checked) => setNewSeason({
+                            ...newSeason,
+                            isCurrent: checked
+                          })}
+                        />
+                      </div>
                     </div>
 
                     <div className="flex justify-end space-x-2">
@@ -685,6 +722,7 @@ export default function TournamentEditPage({ params }: { params: { id: string } 
                               description: newSeason.description || '',
                               permalink: newSeason.permalink,
                               isPublic: newSeason.isPublic || false,
+                              isCurrent: newSeason.isCurrent || false,
                               createdAt: new Date().toISOString().split('T')[0]
                             }
                             setSeasons([...seasons, season])
