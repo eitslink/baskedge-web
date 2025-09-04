@@ -214,14 +214,15 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
-          {/* Standings - 2列表示 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--primary-color)' }}>
-              <Trophy className="inline h-6 w-6 mr-2" />
-              順位表
-            </h2>
-            {standings.length > 0 ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Standings and Player Stats - 2列表示 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Standings */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--primary-color)' }}>
+                <Trophy className="inline h-6 w-6 mr-2" />
+                順位表
+              </h2>
+              {standings.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
@@ -234,7 +235,7 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {standings.slice(0, 6).map((team, index) => (
+                      {standings.map((team, index) => (
                         <tr key={team.team} className={index < 3 ? 'bg-yellow-50' : ''}>
                           <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                             {team.position}
@@ -256,56 +257,20 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
                     </tbody>
                   </table>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">順位</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">チーム</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">勝</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">負</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">勝率</th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {standings.slice(6, 12).map((team, index) => (
-                        <tr key={team.team} className="bg-white">
-                          <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {team.position}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {team.team}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {team.wins}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {team.losses}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {(team.winPercentage * 100).toFixed(1)}%
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  <p>順位表データは準備中です</p>
                 </div>
-              </div>
-            ) : (
-              <div className="text-center text-gray-500 py-8">
-                <p>順位表データは準備中です</p>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          {/* Player Stats Ranking - 2列表示 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--primary-color)' }}>
-              <Target className="inline h-6 w-6 mr-2" />
-              プレイヤースコアランキング
-            </h2>
-            {playerStats.length > 0 ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Player Stats Ranking */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--primary-color)' }}>
+                <Target className="inline h-6 w-6 mr-2" />
+                プレイヤースコアランキング
+              </h2>
+              {playerStats.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
@@ -320,7 +285,7 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {playerStats.slice(0, 5).map((player, index) => (
+                      {playerStats.map((player, index) => (
                         <tr key={player.name} className={index < 3 ? 'bg-yellow-50' : ''}>
                           <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                             {player.position}
@@ -348,66 +313,25 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
                     </tbody>
                   </table>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">順位</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">選手名</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">チーム</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">得点</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">3P</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">FG</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">FT</th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {playerStats.slice(5, 10).map((player, index) => (
-                        <tr key={player.name} className="bg-white">
-                          <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {player.position}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {player.name}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {player.team}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
-                            {player.points}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {player.threePointers}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {player.fg}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {player.ft}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  <p>プレイヤー統計データは準備中です</p>
                 </div>
-              </div>
-            ) : (
-              <div className="text-center text-gray-500 py-8">
-                <p>プレイヤー統計データは準備中です</p>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
-          {/* Game Results - 2列表示 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--primary-color)' }}>
-              <Calendar className="inline h-6 w-6 mr-2" />
-              試合結果一覧
-            </h2>
-            {gameResults.length > 0 ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Game Results and Upcoming Games - 2列表示 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Game Results */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--primary-color)' }}>
+                <Calendar className="inline h-6 w-6 mr-2" />
+                試合結果一覧
+              </h2>
+              {gameResults.length > 0 ? (
                 <div className="space-y-4">
-                  {gameResults.slice(0, 3).map((game, index) => (
+                  {gameResults.map((game, index) => (
                     <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center space-x-4">
                         <span className="text-sm text-gray-500">{game.date}</span>
@@ -441,59 +365,22 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
                     </div>
                   ))}
                 </div>
-                <div className="space-y-4">
-                  {gameResults.slice(3, 6).map((game, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center space-x-4">
-                        <span className="text-sm text-gray-500">{game.date}</span>
-                        <div className="flex items-center space-x-2">
-                          <span className="font-medium">{game.home}</span>
-                          <span className="text-gray-500">vs</span>
-                          <span className="font-medium">{game.away}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span 
-                          className="px-2 py-1 rounded text-sm font-medium"
-                          style={{ 
-                            backgroundColor: game.homeScore > game.awayScore ? 'var(--accent-color)' : '#6b7280',
-                            color: 'white'
-                          }}
-                        >
-                          {game.homeScore}
-                        </span>
-                        <span className="text-gray-500">-</span>
-                        <span 
-                          className="px-2 py-1 rounded text-sm font-medium"
-                          style={{ 
-                            backgroundColor: game.awayScore > game.homeScore ? 'var(--accent-color)' : '#6b7280',
-                            color: 'white'
-                          }}
-                        >
-                          {game.awayScore}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  <p>試合結果は準備中です</p>
                 </div>
-              </div>
-            ) : (
-              <div className="text-center text-gray-500 py-8">
-                <p>試合結果は準備中です</p>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          {/* Upcoming Games - 2列表示 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--primary-color)' }}>
-              <Award className="inline h-6 w-6 mr-2" />
-              次の試合予定一覧
-            </h2>
-            {upcomingGames.length > 0 ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Upcoming Games */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--primary-color)' }}>
+                <Award className="inline h-6 w-6 mr-2" />
+                次の試合予定一覧
+              </h2>
+              {upcomingGames.length > 0 ? (
                 <div className="space-y-4">
-                  {upcomingGames.slice(0, 3).map((game, index) => (
+                  {upcomingGames.map((game, index) => (
                     <div key={index} className="flex items-center justify-between p-4 border rounded-lg bg-blue-50">
                       <div className="flex items-center space-x-4">
                         <span className="text-sm text-gray-500">{game.date}</span>
@@ -510,30 +397,12 @@ export default async function SeasonPublicPage({ params }: SeasonPageProps) {
                     </div>
                   ))}
                 </div>
-                <div className="space-y-4">
-                  {upcomingGames.slice(3, 6).map((game, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg bg-blue-50">
-                      <div className="flex items-center space-x-4">
-                        <span className="text-sm text-gray-500">{game.date}</span>
-                        <div className="flex items-center space-x-2">
-                          <span className="font-medium">{game.home}</span>
-                          <span className="text-gray-500">vs</span>
-                          <span className="font-medium">{game.away}</span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm text-gray-600">{game.time}</div>
-                        <div className="text-xs text-gray-500">{game.venue}</div>
-                      </div>
-                    </div>
-                  ))}
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  <p>予定されている試合はありません</p>
                 </div>
-              </div>
-            ) : (
-              <div className="text-center text-gray-500 py-8">
-                <p>予定されている試合はありません</p>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           {/* Goal Leaders - 3列表示 */}
