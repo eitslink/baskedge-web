@@ -410,36 +410,6 @@ export default function TeamEditPage({ params }: { params: { id: string } }) {
               </Select>
             </div>
 
-            {/* Win/Loss Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="wins">勝利数</Label>
-                <Input
-                  id="wins"
-                  type="number"
-                  value={team?.wins || ''}
-                  onChange={(e) => setTeam({...team, wins: parseInt(e.target.value) || 0})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="losses">敗北数</Label>
-                <Input
-                  id="losses"
-                  type="number"
-                  value={team?.losses || ''}
-                  onChange={(e) => setTeam({...team, losses: parseInt(e.target.value) || 0})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>勝率</Label>
-                <div className="h-10 flex items-center justify-center bg-muted rounded-md font-bold">
-                  {team?.wins && team?.losses ? 
-                    ((team.wins / (team.wins + team.losses)) * 100).toFixed(1) + '%' : 
-                    '0%'
-                  }
-                </div>
-              </div>
-            </div>
 
             {/* Game History */}
             <div className="space-y-4">
