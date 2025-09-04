@@ -63,6 +63,10 @@ interface PublicPageSettings {
   customCSS: string
   headerText: string
   footerText: string
+  permalink: string
+  seasonPermalinks: {
+    [season: string]: string
+  }
 }
 
 export default function TournamentEditPage({ params }: { params: { id: string } }) {
@@ -111,8 +115,22 @@ export default function TournamentEditPage({ params }: { params: { id: string } 
     favicon: null,
     customCSS: '',
     headerText: '2024春季リーグ戦 - BaskEdge',
-    footerText: '© 2024 BaskEdge. All rights reserved.'
+    footerText: '© 2024 BaskEdge. All rights reserved.',
+    permalink: 'xxxleague',
+    seasonPermalinks: {
+      '2024春': 'xxxleague/2024-spring/',
+      '2024夏': 'xxxleague/2024-summer/',
+      '2024秋': 'xxxleague/2024-autumn/',
+      '2024冬': 'xxxleague/2024-winter/',
+      '2025春': 'xxxleague/2025-spring/',
+      '2025夏': 'xxxleague/2025-summer/'
+    }
   })
+
+  const [availableSeasons] = useState([
+    '2024春', '2024夏', '2024秋', '2024冬',
+    '2025春', '2025夏', '2025秋', '2025冬'
+  ])
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -638,6 +656,69 @@ export default function TournamentEditPage({ params }: { params: { id: string } 
                 </div>
               </div>
 
+              {/* Permalink Settings */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">パーマリンク設定</h3>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="permalink">基本パーマリンク</Label>
+                    <div className="flex items-center space-x-2">
+                      <Input
+                        id="permalink"
+                        value={publicPageSettings.permalink}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPublicPageSettings({
+                          ...publicPageSettings,
+                          permalink: e.target.value
+                        })}
+                        placeholder="xxxleague"
+                        minLength={6}
+                      />
+                      <span className="text-sm text-muted-foreground">.com/</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      最低6文字以上で入力してください。未指定の場合はデータベースIDが使用されます。
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <h4 className="text-md font-medium">シーズン別パーマリンク</h4>
+                    <div className="space-y-3">
+                      {availableSeasons.map((season) => (
+                        <div key={season} className="flex items-center space-x-2">
+                          <Label htmlFor={`season-${season}`} className="w-20 text-sm">
+                            {season}
+                          </Label>
+                          <div className="flex items-center space-x-2 flex-1">
+                            <span className="text-sm text-muted-foreground">
+                              {publicPageSettings.permalink || 'xxxleague'}.com/
+                            </span>
+                            <Input
+                              id={`season-${season}`}
+                              value={publicPageSettings.seasonPermalinks[season] || ''}
+                              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                const newSeasonPermalinks = {
+                                  ...publicPageSettings.seasonPermalinks,
+                                  [season]: e.target.value
+                                }
+                                setPublicPageSettings({
+                                  ...publicPageSettings,
+                                  seasonPermalinks: newSeasonPermalinks
+                                })
+                              }}
+                              placeholder={`${season.toLowerCase()}/`}
+                              className="flex-1"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      各シーズンの個別URLを設定できます。例: xxxleague/2025-spring/
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* Content Settings */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">コンテンツ</h3>
@@ -701,12 +782,41 @@ export default function TournamentEditPage({ params }: { params: { id: string } 
                 公開ページのプレビューを表示します
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="border rounded-lg p-6 bg-gray-50">
-                <div className="text-center text-muted-foreground">
-                  <Eye className="h-12 w-12 mx-auto mb-4" />
-                  <p>プレビュー機能は開発中です</p>
-                  <p className="text-sm">設定した内容が公開ページに反映されます</p>
+            <CardContent className="space-y-6">
+              {/* URL Preview */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">公開URL</h3>
+                <div className="space-y-2">
+                  <Label>基本URL</Label>
+                  <div className="p-3 bg-gray-50 rounded-md font-mono text-sm">
+                    https://{publicPageSettings.permalink || 'xxxleague'}.com/
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>シーズン別URL</Label>
+                  <div className="space-y-2">
+                    {Object.entries(publicPageSettings.seasonPermalinks).map(([season, url]) => (
+                      <div key={season} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                        <span className="font-medium">{season}</span>
+                        <span className="font-mono text-sm text-muted-foreground">
+                          https://{publicPageSettings.permalink || 'xxxleague'}.com/{url}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Visual Preview */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">デザインレビュー</h3>
+                <div className="border rounded-lg p-6 bg-gray-50">
+                  <div className="text-center text-muted-foreground">
+                    <Eye className="h-12 w-12 mx-auto mb-4" />
+                    <p>プレビュー機能は開発中です</p>
+                    <p className="text-sm">設定した内容が公開ページに反映されます</p>
+                  </div>
                 </div>
               </div>
             </CardContent>
